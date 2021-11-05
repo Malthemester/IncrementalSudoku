@@ -1,7 +1,8 @@
 import './App.css';
-import Sudoku from './sudoku'
-import NumberInput from './numberInput'
-import MakeSudoku from './generatorSudoku'
+import Sudoku from './Components/sudoku'
+import NumberInput from './Components/numberInput'
+import Solved from './Components/solved'
+import { MakeSudoku, RemoveNumbers, CheckSukoku } from './HelperFunctions/generatorSudoku'
 import { react, useEffect, useState } from "react"
 
 let seleNumber = 1
@@ -9,24 +10,22 @@ let seleNumber = 1
 function App() {
   const [selectedNumber, SetSelectedNumber] = useState(seleNumber)
 
-  const [size, SetSize] = useState(9)
-  const [squares, SetSquares] = useState(3)
+  const [size, SetSize] = useState(4)
+  const [squares, SetSquares] = useState(2)
   const [gameBoard, SetGameBoard] = useState(Array(size).fill(Array(size).fill(null)))
-  
-  let solveBoard
+
+  const [solved, SetSolved] = useState(false)
 
   useEffect(() => {
-    let tempGameBoard = []
-    for (let i = 0; i < size; i++) {
-      tempGameBoard.push([])
-      for (let j = 0; j < size; j++) {
-        tempGameBoard[i].push(null)
-      }
-    }
-    solveBoard = tempGameBoard
 
+    SetSolved(CheckSukoku(size, gameBoard, squares))
+
+  }, [gameBoard])
+
+
+  useEffect(() => {
     let newBoard = MakeSudoku(size, squares)
-
+    newBoard = RemoveNumbers(newBoard, 5)
     SetGameBoard(newBoard)
   }, [])
 
@@ -46,17 +45,16 @@ function App() {
     SetSelectedNumber(number.target.value)
   }
 
-  const newBoard = (newBoard) =>{
-      SetGameBoard(newBoard)
+  const newBoard = (newBoard) => {
+    SetGameBoard(newBoard)
   }
 
   useEffect(() => {
     const handleInput = (e) => {
-      if  (e.key <= size && e.key != 0){
+      if (e.key <= size && e.key != 0) {
         SetSelectedNumber(e.key)
         seleNumber = e.key
       }
-
     }
     document.addEventListener("keydown", handleInput);
 
@@ -64,11 +62,11 @@ function App() {
       document.removeEventListener("keydown", handleInput);
     };
   }, []);
-  
-  
+
+
   return (
     <div>
-      <NumberInput selectedNumber={selectedNumber}  size={size} callBack={handleNumberClick} />
+      <NumberInput selectedNumber={selectedNumber} size={size} callBack={handleNumberClick} />
       <p>
         <Sudoku
           size={size}
@@ -77,6 +75,7 @@ function App() {
           value={gameBoard}
         ></Sudoku>
       </p>
+      <Solved solved={solved}></Solved>
     </div>
   )
 }

@@ -41,11 +41,7 @@ function CheckSukoku(size, board, squares) {
     return true
 }
 
-function SolveBoard({ board }) {
-
-}
-
-export default function MakeSudoku(size, square) {
+function MakeSudoku(size, square) {
     let numArry = fillArray(size)
     let newBoard = Array(size).fill(null).map(() => Array(size).fill(numArry))
     let pickerArr = [[Math.floor(Math.random() * size), Math.floor(Math.random() * size)]]
@@ -67,7 +63,7 @@ export default function MakeSudoku(size, square) {
                 randomNumber = newBoard[pickerArr[index][0]][pickerArr[index][1]][randomIndexNumber]
 
                 newBoard[pickerArr[index][0]][pickerArr[index][1]] = [randomNumber]
-                RemovePencelmark(pickerArr[index][0], pickerArr[index][1], newBoard, size, randomNumber, square, pickerIndex, pickerArr)
+                RemovePencelmark(pickerArr[index][0], pickerArr[index][1], newBoard, size, randomNumber, (square / size), pickerIndex, pickerArr)
             }
             pickerArr.splice(index, 1)
             pickerIndex.splice(index, 1)
@@ -148,3 +144,43 @@ function RemovePencelmark(rowID, culumnID, newBoard, size, randomNumber, squareS
         }
     }
 }
+
+function RemoveNumbers(board, remove) {
+
+    let size = board.length
+    let randomIndex = RandomNewIndex(size, remove)
+
+    randomIndex.forEach(index => {
+        let removeIndex = GetIndex(size, index)
+        board[removeIndex[0]][removeIndex[1]] = []
+    });
+
+    return board
+}
+
+function RandomNewIndex(size, remove) {
+    let arrOfIndex = []
+    let removeIndex = []
+
+    for (let i = 0; i < size * size; i++) {
+        arrOfIndex.push(i)
+    }
+
+    arrOfIndex.sort(() => (Math.random() > 0.5) ? 1 : -1);
+
+    for (let i = 0; i < remove; i++) {
+        removeIndex.push(arrOfIndex[i])
+    }
+
+    return removeIndex
+}
+
+function GetIndex(size, number) {
+    let row = Math.floor(number / size)
+    let culumn = number % size
+    return [row, culumn]
+}
+
+
+
+export { MakeSudoku, RemoveNumbers, CheckSukoku }
