@@ -10,8 +10,8 @@ let seleNumber = 1
 function App() {
   const [selectedNumber, SetSelectedNumber] = useState(seleNumber)
 
-  const [size, SetSize] = useState(4)
-  const [squares, SetSquares] = useState(2)
+  const [size, SetSize] = useState(9)
+  const [squares, SetSquares] = useState(3)
   const [gameBoard, SetGameBoard] = useState(Array(size).fill(Array(size).fill(null)))
 
   const [solved, SetSolved] = useState(false)

@@ -1,11 +1,11 @@
-function fillArray(size) {
+function FillArray(size) {
     const fullNumberList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     return fullNumberList.splice(0, size)
 }
 
-function checkRowAndCulumn(arrayIndex, board, size) {
-    let checkRow = fillArray(size)
-    let checkColumn = fillArray(size)
+function CheckRowAndCulumn(arrayIndex, board, size) {
+    let checkRow = FillArray(size)
+    let checkColumn = FillArray(size)
 
     for (let i = 0; i < size; i++) {
         checkRow = checkRow.filter(number => number != board[arrayIndex][i])
@@ -15,8 +15,8 @@ function checkRowAndCulumn(arrayIndex, board, size) {
     return checkRow.length == 0 && checkColumn.length == 0 ? true : false
 }
 
-function checkSquare(board, size, squareSize, squareX, squareY) {
-    let checkSquare = fillArray(size)
+function CheckSquare(board, size, squareSize, squareX, squareY) {
+    let checkSquare = FillArray(size)
 
     for (let i = 0; i < squareSize; i++) {
         for (let j = 0; j < squareSize; j++) {
@@ -28,13 +28,13 @@ function checkSquare(board, size, squareSize, squareX, squareY) {
 
 function CheckSukoku(size, board, squares) {
     for (let i = 0; i < size; i++) {
-        if (!checkRowAndCulumn(i, board, size))
+        if (!CheckRowAndCulumn(i, board, size))
             return false
     }
 
     for (let i = 0; i < squares; i++) {
         for (let j = 0; j < squares; j++) {
-            if (!checkSquare(board, size, squares, i * squares, j * squares))
+            if (!CheckSquare(board, size, squares, i * squares, j * squares))
                 return false
         }
     }
@@ -42,7 +42,7 @@ function CheckSukoku(size, board, squares) {
 }
 
 function MakeSudoku(size, square) {
-    let numArry = fillArray(size)
+    let numArry = FillArray(size)
     let newBoard = Array(size).fill(null).map(() => Array(size).fill(numArry))
     let pickerArr = [[Math.floor(Math.random() * size), Math.floor(Math.random() * size)]]
     let pickerIndex = []
@@ -183,4 +183,4 @@ function GetIndex(size, number) {
 
 
 
-export { MakeSudoku, RemoveNumbers, CheckSukoku }
+export { MakeSudoku, RemoveNumbers, CheckSukoku, FillArray, CheckSquare, CheckRowAndCulumn}
