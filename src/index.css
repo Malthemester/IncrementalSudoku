@@ -23,25 +23,30 @@ a {
   margin-left: 5px;
 }
 
+.buttonList{
+  margin: 5px;
+}
+
 .button {
-  background-color: #4CAF50; /* Green */
+  background-color: #a7c8a3; /* Green */
   border: solid thin;
   color: black;
-  border-radius: 2px;
-  height: 1.65em; width: 1.65em;
+  border-radius: 1px;
+  height: 30px; width: 100px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  
+  font-size: 14px;
+  display: block;
+  margin-bottom: 3px;
 }
 
-.button:active {
-  background-color: #0c78aa; /* Green */
+.button:disabled {
+  background-color: #7c7c7c; /* Green */
 }
 
-.button:hover {
-  background-color: #75e979; /* Green */
+.button:hover:enabled {
+  background-color: #8bcf83; /* Green */
 }
 
 .radio-toolbar {
@@ -60,12 +65,12 @@ a {
 
 .sudokuTable{
   background-color: ghostwhite;
-
 }
 
 .sudoku{
   margin-top: 5px;
   margin-bottom: 5px;
+  display: flex;
 }
 
 .radio-toolbar label {

@@ -3,7 +3,7 @@ import Sudoku from './Components/sudoku'
 import NumberInput from './Components/numberInput'
 import Solved from './Components/solved'
 import { MakeSudoku, RemoveNumbers, CheckSukoku } from './HelperFunctions/generatorSudoku'
-import { react, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Header from './Components/header'
 
 let seleNumber = 1
@@ -15,6 +15,8 @@ function App() {
   const [squares, SetSquares] = useState(2)
   const [gameBoard, SetGameBoard] = useState(Array(size).fill(Array(size).fill(null)))
 
+  let remove = 1
+
   const [solved, SetSolved] = useState(false)
 
   useEffect(() => {
@@ -24,10 +26,14 @@ function App() {
   }, [gameBoard])
 
 
-  useEffect(() => {
+  function NewGame(size, squares) {
     let newBoard = MakeSudoku(size, squares)
-    newBoard = RemoveNumbers(newBoard, 7)
+    newBoard = RemoveNumbers(newBoard, remove)
     SetGameBoard(newBoard)
+  }
+
+  useEffect(() => {
+    NewGame(size, squares);
   }, [])
 
   function handleClick(x, y) {
@@ -46,9 +52,6 @@ function App() {
     SetSelectedNumber(number.target.value)
   }
 
-  const newBoard = (newBoard) => {
-    SetGameBoard(newBoard)
-  }
 
   useEffect(() => {
     const handleInput = (e) => {
@@ -71,16 +74,16 @@ function App() {
       <div className="game">
         <NumberInput selectedNumber={selectedNumber} size={size} callBack={handleNumberClick} />
 
-        <div className="sudoku">
+        <div className="sudoku" >
           <Sudoku
             size={size}
             squares={squares}
             callBack={handleClick}
             value={gameBoard}
           ></Sudoku>
+          <Solved solved={solved} newGame={NewGame}></Solved>
         </div>
 
-        <Solved solved={solved}></Solved>
       </div>
     </div>
   )
