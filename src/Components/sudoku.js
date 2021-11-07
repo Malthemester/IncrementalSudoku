@@ -38,7 +38,7 @@ export default function Sudoku(props) {
 	}, [props.value])
 
 	return (
-		<table>
+		<table className="sudokuTable">
 			{board}
 		</table>
 	)

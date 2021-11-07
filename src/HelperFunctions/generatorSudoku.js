@@ -63,7 +63,7 @@ function MakeSudoku(size, square) {
                 randomNumber = newBoard[pickerArr[index][0]][pickerArr[index][1]][randomIndexNumber]
 
                 newBoard[pickerArr[index][0]][pickerArr[index][1]] = [randomNumber]
-                RemovePencelmark(pickerArr[index][0], pickerArr[index][1], newBoard, size, randomNumber, (square / size), pickerIndex, pickerArr)
+                RemovePencelmark(pickerArr[index][0], pickerArr[index][1], newBoard, size, randomNumber, square, pickerIndex, pickerArr)
             }
             pickerArr.splice(index, 1)
             pickerIndex.splice(index, 1)
