@@ -1,3 +1,5 @@
+import { SaveResources } from "./saveValue"
+
 function FillArray(size) {
     const fullNumberList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     return fullNumberList.splice(0, size)
@@ -28,14 +30,14 @@ function CheckSquare(board, size, squareSize, squareX, squareY) {
 
 function CheckSukoku(size, board, squares) {
     let checkBoard = JSON.parse(JSON.stringify(board))
-    
+
     for (let i = 0; i < checkBoard.length; i++) {
         for (let j = 0; j < checkBoard.length; j++) {
-            
+
             if (String(checkBoard[i][j]).includes("og")) {
-                checkBoard[i][j] = checkBoard[i][j].replace('og','')
+                checkBoard[i][j] = checkBoard[i][j].replace('og', '')
             }
-        }        
+        }
     }
 
     for (let i = 0; i < size; i++) {
@@ -157,14 +159,14 @@ function RemovePencelmark(rowID, culumnID, newBoard, size, randomNumber, squareS
     }
 }
 
-function MarkOG(board){
+function MarkOG(board) {
 
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board.length; j++) {
             if (board[i][j].length > 0) {
                 board[i][j] = `${board[i][j]}og`
             }
-        }        
+        }
     }
 }
 
@@ -173,10 +175,17 @@ function RemoveNumbers(board, remove) {
     let size = board.length
     let randomIndex = RandomNewIndex(size, remove)
 
+    let solveList = []
+
     randomIndex.forEach(index => {
         let removeIndex = GetIndex(size, index)
+
+        solveList.push(`${removeIndex[0]}${removeIndex[1]}${board[removeIndex[0]][removeIndex[1]]}`)
+
         board[removeIndex[0]][removeIndex[1]] = []
     });
+
+    SaveResources("curSolveList",solveList)
 
     MarkOG(board)
 
@@ -208,4 +217,4 @@ function GetIndex(size, number) {
 
 
 
-export { MakeSudoku, RemoveNumbers, CheckSukoku, FillArray, CheckSquare, CheckRowAndCulumn}
+export { MakeSudoku, RemoveNumbers, CheckSukoku, FillArray, CheckSquare, CheckRowAndCulumn }

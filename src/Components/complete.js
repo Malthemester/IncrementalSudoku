@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { SolveOne } from '../HelperFunctions/solve'
 
 export default function DesplaySolved(props) {
 
@@ -14,7 +15,8 @@ export default function DesplaySolved(props) {
         let tempFill = fillBar + barFill
 
         if (tempFill >= 100) {
-            SetFillBar(100)
+            SetFillBar(0)
+            props.setboard(SolveOne(props.board))
         }
         else
             SetFillBar(tempFill)

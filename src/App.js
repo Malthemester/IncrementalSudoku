@@ -1,7 +1,7 @@
 import './App.css';
 import Sudoku from './Components/sudoku'
 import NumberInput from './Components/numberInput'
-import Solved from './Components/complete'
+import Complete from './Components/complete'
 import { MakeSudoku, RemoveNumbers, CheckSukoku } from './HelperFunctions/generatorSudoku'
 import { useEffect, useState } from "react"
 import Header from './Components/header'
@@ -12,7 +12,7 @@ import { CollectResources } from './HelperFunctions/getResources'
 let seleNumber = 1
 
 function App() {
-	let remove = 7
+	let remove = 8
 	let size = 4
 	let squares = 2
 
@@ -78,7 +78,7 @@ function App() {
 	useEffect(() => {
 		let savedBoard = localStorage.getItem("curBoard")
 		if (savedBoard != null) {
-			
+
 			let curBoard = LocalToArray(savedBoard)
 			SetGameBoard(curBoard)
 		}
@@ -98,7 +98,17 @@ function App() {
 		tempGameBoard[x][y] = String(seleNumber)
 		SetGameBoard(tempGameBoard)
 		SaveBoard(tempGameBoard, "curBoard")
+	}
 
+	function NewSolve(solve)
+	{
+		if (solve == null) {
+			return
+		}
+		let tempGameBoard = [...gameBoard]
+		tempGameBoard[solve[0]][solve[1]] = String(solve[2])
+		SetGameBoard(tempGameBoard)
+		SaveBoard(tempGameBoard, "curBoard")
 	}
 
 	const handleNumberClick = (number) => {
@@ -135,7 +145,15 @@ function App() {
 							callBack={handleClick}
 							value={gameBoard}
 						></Sudoku>
-						<Solved solved={solved} newGame={NewGame} squares={squares} size={size} collect={collect}></Solved>
+						<Complete
+							solved={solved}
+							newGame={NewGame}
+							squares={squares}
+							size={size}
+							collect={collect}
+							setboard={NewSolve}
+							board={gameBoard}>
+						</Complete>
 					</div>
 				</div>
 

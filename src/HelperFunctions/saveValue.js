@@ -13,6 +13,10 @@ function LoadResources(key) {
     return Number(localStorage.getItem(key))
 }
 
+function LoadSolution(key) {
+    return localStorage.getItem(key)
+}
+
 function LocalToArray(value) {
     let lengthValue = value.split('::')
 
@@ -37,4 +41,4 @@ function LocalToArray(value) {
     return newBoard
 }
 
-export { SaveBoard, LocalToArray, SaveResources, LoadResources }
+export { SaveBoard, LocalToArray, SaveResources, LoadResources , LoadSolution}
