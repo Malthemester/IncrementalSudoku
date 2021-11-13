@@ -67,6 +67,8 @@ body {
 
 .game{
   margin: 16px;
+  display: flex;
+
 }
 
 .sudoku{

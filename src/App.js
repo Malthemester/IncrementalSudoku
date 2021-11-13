@@ -8,6 +8,7 @@ import Header from './Components/header'
 import DisplayResources from './Components/resources'
 import { SaveBoard, LocalToArray, LoadResources } from './HelperFunctions/saveValue'
 import { CollectResources } from './HelperFunctions/getResources'
+import Shop from './Components/shop'
 
 let seleNumber = 1
 
@@ -100,8 +101,7 @@ function App() {
 		SaveBoard(tempGameBoard, "curBoard")
 	}
 
-	function NewSolve(solve)
-	{
+	function NewSolve(solve) {
 		if (solve == null) {
 			return
 		}
@@ -135,9 +135,9 @@ function App() {
 		<div>
 			<Header></Header>
 			<div className="game">
-				<DisplayResources resources={resources} ></DisplayResources>
-				<NumberInput selectedNumber={selectedNumber} size={size} callBack={handleNumberClick} />
 				<div>
+					<DisplayResources resources={resources} ></DisplayResources>
+					<NumberInput selectedNumber={selectedNumber} size={size} callBack={handleNumberClick} />
 					<div className="sudoku" >
 						<Sudoku
 							size={size}
@@ -156,7 +156,9 @@ function App() {
 						</Complete>
 					</div>
 				</div>
-
+				<div>
+					<Shop resources={resources}></Shop>
+				</div>
 			</div>
 		</div>
 	)
