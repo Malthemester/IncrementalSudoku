@@ -27,17 +27,29 @@ function CheckSquare(board, size, squareSize, squareX, squareY) {
 }
 
 function CheckSukoku(size, board, squares) {
+    let checkBoard = JSON.parse(JSON.stringify(board))
+    
+    for (let i = 0; i < checkBoard.length; i++) {
+        for (let j = 0; j < checkBoard.length; j++) {
+            
+            if (String(checkBoard[i][j]).includes("og")) {
+                checkBoard[i][j] = checkBoard[i][j].replace('og','')
+            }
+        }        
+    }
+
     for (let i = 0; i < size; i++) {
-        if (!CheckRowAndCulumn(i, board, size))
+        if (!CheckRowAndCulumn(i, checkBoard, size))
             return false
     }
 
     for (let i = 0; i < squares; i++) {
         for (let j = 0; j < squares; j++) {
-            if (!CheckSquare(board, size, squares, i * squares, j * squares))
+            if (!CheckSquare(checkBoard, size, squares, i * squares, j * squares))
                 return false
         }
     }
+
     return true
 }
 
@@ -145,6 +157,17 @@ function RemovePencelmark(rowID, culumnID, newBoard, size, randomNumber, squareS
     }
 }
 
+function MarkOG(board){
+
+    for (let i = 0; i < board.length; i++) {
+        for (let j = 0; j < board.length; j++) {
+            if (board[i][j].length > 0) {
+                board[i][j] = `${board[i][j]}og`
+            }
+        }        
+    }
+}
+
 function RemoveNumbers(board, remove) {
 
     let size = board.length
@@ -154,6 +177,8 @@ function RemoveNumbers(board, remove) {
         let removeIndex = GetIndex(size, index)
         board[removeIndex[0]][removeIndex[1]] = []
     });
+
+    MarkOG(board)
 
     return board
 }

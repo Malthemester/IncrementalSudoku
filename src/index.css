@@ -7,21 +7,18 @@ body {
   background-color:darkgray;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
 .topBar {
   background-color: #3a4344;
   color: whitesmoke;
   margin: 0;
   margin-bottom: 5px;
+  width: 100%;
 }
 
 .topText {
   margin-left: 5px;
 }
+
 
 .buttonList{
   margin: 5px;
@@ -39,6 +36,15 @@ a {
   font-size: 14px;
   display: block;
   margin-bottom: 3px;
+}
+
+
+#Barfill{
+  background-color: whitesmoke;
+  border: solid thin;
+  user-select: none;
+  width: 100px;
+  height: 30px;
 }
 
 .button:disabled {
@@ -63,15 +69,12 @@ a {
   margin: 16px;
 }
 
-.sudokuTable{
-  background-color: ghostwhite;
-}
-
 .sudoku{
   margin-top: 5px;
   margin-bottom: 5px;
   display: flex;
 }
+
 
 .radio-toolbar label {
     display: inline-block;
@@ -92,9 +95,27 @@ a {
     border-color: #4c4;
 }
 
-table { border-collapse: collapse; font-family: Calibri, sans-serif; }
-colgroup, tbody { border: solid medium; }
-td { border: solid thin; height: 30px; width: 30px; text-align: center; padding: 0; }
+table.sudokuTable { 
+  border-collapse: collapse; 
+  font-family: Calibri, sans-serif;
+  background-color: ghostwhite;
+  user-select: none;
+
+}
+
+table.sudokuTable colgroup , table.sudokuTable tbody {
+  border: solid medium; 
+}
+
+table.sudokuTable td { 
+  border: solid thin; 
+  height: 30px; 
+  width: 30px; 
+  text-align: center; 
+  padding: 0;
+
+}
+
 
 ul {
   list-style-type: none;

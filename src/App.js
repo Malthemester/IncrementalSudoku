@@ -1,92 +1,147 @@
 import './App.css';
 import Sudoku from './Components/sudoku'
 import NumberInput from './Components/numberInput'
-import Solved from './Components/solved'
+import Solved from './Components/complete'
 import { MakeSudoku, RemoveNumbers, CheckSukoku } from './HelperFunctions/generatorSudoku'
 import { useEffect, useState } from "react"
 import Header from './Components/header'
+import DisplayResources from './Components/resources'
+import { SaveBoard, LocalToArray, LoadResources } from './HelperFunctions/saveValue'
+import { CollectResources } from './HelperFunctions/getResources'
 
 let seleNumber = 1
 
 function App() {
-  const [selectedNumber, SetSelectedNumber] = useState(seleNumber)
+	let remove = 7
+	let size = 4
+	let squares = 2
 
-  const [size, SetSize] = useState(4)
-  const [squares, SetSquares] = useState(2)
-  const [gameBoard, SetGameBoard] = useState(Array(size).fill(Array(size).fill(null)))
+	const resourcesObj = {
+		x4: 0,
+		x9: -1,
 
-  let remove = 1
+		x4PM: 0,
+		x9PM: 0
+	}
 
-  const [solved, SetSolved] = useState(false)
+	const resourcesDisplayObj = {
+		x4: true,
+		x9: false,
+	}
 
-  useEffect(() => {
+	let unSolvedBoard = []
 
-    SetSolved(CheckSukoku(size, gameBoard, squares))
+	const [selectedNumber, SetSelectedNumber] = useState(seleNumber)
+	const [gameBoard, SetGameBoard] = useState(Array(size).fill(Array(size).fill(null)))
+	const [resources, SetResources] = useState(resourcesObj)
+	const [solved, SetSolved] = useState(false)
 
-  }, [gameBoard])
+	useEffect(() => {
+		SetSolved(CheckSukoku(size, gameBoard, squares))
+	}, [gameBoard])
 
-
-  function NewGame(size, squares) {
-    let newBoard = MakeSudoku(size, squares)
-    newBoard = RemoveNumbers(newBoard, remove)
-    SetGameBoard(newBoard)
-  }
-
-  useEffect(() => {
-    NewGame(size, squares);
-  }, [])
-
-  function handleClick(x, y) {
-
-    if (gameBoard == null) {
-      return
-    }
-
-    let tempGameBoard = [...gameBoard]
-    tempGameBoard[x][y] = Number(seleNumber)
-    SetGameBoard(tempGameBoard)
-  }
-
-  const handleNumberClick = (number) => {
-    seleNumber = number.target.value
-    SetSelectedNumber(number.target.value)
-  }
+	useEffect(() => {
+		SetSolved(CheckSukoku(size, gameBoard, squares))
+	}, [resources])
 
 
-  useEffect(() => {
-    const handleInput = (e) => {
-      if (e.key <= size && e.key != 0) {
-        SetSelectedNumber(e.key)
-        seleNumber = e.key
-      }
-    }
-    document.addEventListener("keydown", handleInput);
+	function NewGame(size, squares) {
+		let newBoard = MakeSudoku(size, squares)
+		newBoard = RemoveNumbers(newBoard, remove)
+		unSolvedBoard = newBoard
+		SetGameBoard(newBoard)
+		SaveBoard(newBoard, "curBoard")
+	}
 
-    return () => {
-      document.removeEventListener("keydown", handleInput);
-    };
-  }, []);
+	function LoadAllResources() {
+		let tempResources = resources
+
+		if (resourcesDisplayObj.x4)
+			tempResources.x4 = LoadResources("x4")
+
+		if (resourcesDisplayObj.x9)
+			tempResources.x9 = LoadResources("x9")
+
+		return tempResources
+	}
+
+	function collect(key, value, size, squares) {
+
+		let tempResources = resources
+
+		tempResources[`${key}`] = CollectResources(key, value)
+
+		SetResources(tempResources)
+		NewGame(size, squares)
+	}
+
+	useEffect(() => {
+		let savedBoard = localStorage.getItem("curBoard")
+		if (savedBoard != null) {
+			
+			let curBoard = LocalToArray(savedBoard)
+			SetGameBoard(curBoard)
+		}
+		else {
+			NewGame(size, squares);
+		}
+
+		SetResources(LoadAllResources())
+
+	}, [])
+
+	function handleClick(x, y) {
+		if (gameBoard == null) {
+			return
+		}
+		let tempGameBoard = [...gameBoard]
+		tempGameBoard[x][y] = String(seleNumber)
+		SetGameBoard(tempGameBoard)
+		SaveBoard(tempGameBoard, "curBoard")
+
+	}
+
+	const handleNumberClick = (number) => {
+		seleNumber = number.target.value
+		SetSelectedNumber(number.target.value)
+	}
+
+	useEffect(() => {
+		const handleInput = (e) => {
+			if (e.key <= size && e.key != 0) {
+				SetSelectedNumber(e.key)
+				seleNumber = e.key
+			}
+		}
+		document.addEventListener("keydown", handleInput);
+
+		return () => {
+			document.removeEventListener("keydown", handleInput);
+		};
+	}, []);
 
 
-  return (
-    <div>
-      <Header></Header>
-      <div className="game">
-        <NumberInput selectedNumber={selectedNumber} size={size} callBack={handleNumberClick} />
+	return (
+		<div>
+			<Header></Header>
+			<div className="game">
+				<DisplayResources resources={resources} ></DisplayResources>
+				<NumberInput selectedNumber={selectedNumber} size={size} callBack={handleNumberClick} />
+				<div>
+					<div className="sudoku" >
+						<Sudoku
+							size={size}
+							squares={squares}
+							callBack={handleClick}
+							value={gameBoard}
+						></Sudoku>
+						<Solved solved={solved} newGame={NewGame} squares={squares} size={size} collect={collect}></Solved>
+					</div>
+				</div>
 
-        <div className="sudoku" >
-          <Sudoku
-            size={size}
-            squares={squares}
-            callBack={handleClick}
-            value={gameBoard}
-          ></Sudoku>
-          <Solved solved={solved} newGame={NewGame}></Solved>
-        </div>
-
-      </div>
-    </div>
-  )
+			</div>
+		</div>
+	)
 }
 
 export default App;

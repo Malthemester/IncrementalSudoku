@@ -1,0 +1,31 @@
+table.resource td {
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    border-collapse: collapse;
+    height: 20px; 
+}
+
+table.resource th {
+    border-bottom: 2px solid rgb(122, 18, 182);
+    text-align: left;
+    border-collapse: collapse;
+    height: 20px; 
+    margin-left: 5px;
+    background-color: darkgray;
+}
+
+
+table.resource { 
+    border-top: 3px;
+    margin-bottom: 10px;
+    border-collapse: collapse; 
+    font-family: Calibri, sans-serif;
+    background-color: ghostwhite;
+    width: 100%;
+    max-width: 350px;
+    table-layout: auto;
+}
+
+table.resource tbody tr:nth-child(odd) {
+    background: #eee;
+}

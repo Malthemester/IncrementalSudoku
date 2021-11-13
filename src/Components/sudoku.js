@@ -6,6 +6,28 @@ export default function Sudoku(props) {
 	let squ = []
 	let colGroup = []
 
+	const bold = {
+		fontWeight: 'bold',
+	  }
+
+	function getFild(value, i, j, callBack) {
+
+		value = String(value)
+
+		if ( value != null && value.includes("og")) {
+			return (
+				<td style={bold} key={`tdK${i}${j}`}>
+					{value.replace('og', '')}
+				</td>)
+		}
+		else {
+			return (
+				<td key={`tdK${i}${j}`} onClick={() => callBack(i, j)}>
+					{value}
+				</td>)
+		}
+	}
+
 	useEffect(() => {
 		for (let i = 0; i < props.squares; i++) {
 			squ.push(<col key={'colG' + i} />)
@@ -21,10 +43,7 @@ export default function Sudoku(props) {
 			let tds = []
 
 			for (let j = 0; j < props.size; j++) {
-				tds.push(<td key={`tdK${i}${j}`} onClick={
-					() => props.callBack(i, j)}>
-					{props.value[i][j]}
-				</td>)
+				tds.push(getFild(props.value[i][j],i,j,props.callBack))
 			}
 			colGroup.push(<tr key={'trK' + i}>{tds}</tr>)
 
