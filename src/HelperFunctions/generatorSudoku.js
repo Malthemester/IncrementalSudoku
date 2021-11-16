@@ -14,7 +14,7 @@ function CheckRowAndCulumn(arrayIndex, board, size) {
         checkColumn = checkColumn.filter(number => number != board[i][arrayIndex])
     }
 
-    return checkRow.length == 0 && checkColumn.length == 0 ? true : false
+    return checkRow.length == 0 && checkColumn.length == 0
 }
 
 function CheckSquare(board, size, squareSize, squareX, squareY) {

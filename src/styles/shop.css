@@ -15,7 +15,7 @@
     border: solid thin;
     color: black;
     border-radius: 1px;
-    height: 20px; width: 100px;
+    height: 20px; width: 150px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -41,8 +41,8 @@
     display:inline-block;
     position:absolute;
     z-index: 1;
-    top: 125%;
-    left: -50%;
+    top: 130%;
+    left: -18%;
   }
   
   .shopBT:hover .tooltiptext {

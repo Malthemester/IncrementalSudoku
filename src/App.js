@@ -3,80 +3,72 @@ import Sudoku from './Components/sudoku'
 import NumberInput from './Components/numberInput'
 import Complete from './Components/complete'
 import { MakeSudoku, RemoveNumbers, CheckSukoku } from './HelperFunctions/generatorSudoku'
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Header from './Components/header'
 import DisplayResources from './Components/resources'
-import { SaveBoard, LocalToArray, LoadResources } from './HelperFunctions/saveValue'
+import { SaveBoard, LocalToArray, LoadResources, SaveResources } from './HelperFunctions/saveValue'
 import { CollectResources } from './HelperFunctions/getResources'
 import Shop from './Components/shop'
+// import {Interval, useInterval} from './HelperFunctions/interval'
+import { SolveOne } from './HelperFunctions/solve'
 
 let seleNumber = 1
 
 function App() {
-	let remove = 8
+	let remove = 2
 	let size = 4
 	let squares = 2
 
-	const resourcesObj = {
-		x4: 0,
-		x9: -1,
+	class Resource {
+		Name = "name"
+		Value = 0
+		Interval = 0
+		AmountPar = 0
+		Display = false
 
-		x4PM: 0,
-		x9PM: 0
+		constructor(name, value, interval, amountPar, display) {
+			this.Name = name
+			this.Value = value
+			this.Interval = interval
+			this.AmountPar = amountPar
+			this.Display = display
+		}
 	}
 
-	const resourcesDisplayObj = {
-		x4: true,
-		x9: false,
+	let currencys =
+		[
+			new Resource("4x4", 0, 0, 0, true),
+			new Resource("9x9")
+		]
+
+	class Incrementel {
+		constructor(name, interval, amount, callBack, active) {
+			this.Name = name
+			this.Interval = interval
+			this.Amount = amount
+			this.CallBack = callBack
+			this.Active = active
+		}
 	}
 
-	let unSolvedBoard = []
+	let incrementelsArr = [
+		new Incrementel("clicker", 50, 0.5, clickBar, false),
+		new Incrementel("consloe", 1500, 2, consloeTest, true)
+	]
+
 
 	const [selectedNumber, SetSelectedNumber] = useState(seleNumber)
 	const [gameBoard, SetGameBoard] = useState(Array(size).fill(Array(size).fill(null)))
-	const [resources, SetResources] = useState(resourcesObj)
+	const [resources, SetResources] = useState(currencys)
 	const [solved, SetSolved] = useState(false)
+	const [FillBar, SetFillBar] = useState(0)
+	const [Amount, SetAmount] = useState(1)
+	const [Active, SetActive] = useState([incrementelsArr[0].Active, incrementelsArr[1].Active])
 
 	useEffect(() => {
-		SetSolved(CheckSukoku(size, gameBoard, squares))
-	}, [gameBoard])
 
-	useEffect(() => {
-		SetSolved(CheckSukoku(size, gameBoard, squares))
-	}, [resources])
+		GetIncrementels()
 
-
-	function NewGame(size, squares) {
-		let newBoard = MakeSudoku(size, squares)
-		newBoard = RemoveNumbers(newBoard, remove)
-		unSolvedBoard = newBoard
-		SetGameBoard(newBoard)
-		SaveBoard(newBoard, "curBoard")
-	}
-
-	function LoadAllResources() {
-		let tempResources = resources
-
-		if (resourcesDisplayObj.x4)
-			tempResources.x4 = LoadResources("x4")
-
-		if (resourcesDisplayObj.x9)
-			tempResources.x9 = LoadResources("x9")
-
-		return tempResources
-	}
-
-	function collect(key, value, size, squares) {
-
-		let tempResources = resources
-
-		tempResources[`${key}`] = CollectResources(key, value)
-
-		SetResources(tempResources)
-		NewGame(size, squares)
-	}
-
-	useEffect(() => {
 		let savedBoard = localStorage.getItem("curBoard")
 		if (savedBoard != null) {
 
@@ -86,10 +78,100 @@ function App() {
 		else {
 			NewGame(size, squares);
 		}
-
 		SetResources(LoadAllResources())
-
 	}, [])
+
+
+	useEffect(() => {
+		SetSolved(CheckSukoku(size, gameBoard, squares))
+	}, [gameBoard])
+
+	useEffect(() => {
+		SetSolved(CheckSukoku(size, gameBoard, squares))
+	}, [resources])
+
+	function GetIncrementels() {
+		let clicker = LoadResources("clicker")
+		let temtActive = Active
+		temtActive[0] = clicker != 0 ? true : false
+
+		SetActive(temtActive)
+	}
+
+	function NewGame(size, squares) {
+		let newBoard = MakeSudoku(size, squares)
+		newBoard = RemoveNumbers(newBoard, remove)
+		SetGameBoard(newBoard)
+		SaveBoard(newBoard, "curBoard")
+	}
+
+
+	function consloeTest() {
+		console.log("cool")
+	}
+	let incrementel1 = new Incrementel("clicker", 50, 0.5, clickBar, true)
+
+
+	function PurchaseClicker() {
+		let temtActive = Active
+
+		temtActive[0] = true
+
+		SaveResources("clicker",true)
+		SetActive(temtActive)
+	}
+
+	useInterval(incrementelsArr[0], Amount, Active[0])
+
+	incrementel1.Amount = 1
+
+	class pruchaseFunc {
+		constructor(name, func) {
+			this.Name = name
+			this.Func = func
+		}
+	}
+
+	function clickBar(barFill) {
+		let tempFill = FillBar + barFill
+
+		if (tempFill >= 100) {
+			if (solved) {
+				SetFillBar(100)
+			}
+			else {
+				SetFillBar(0)
+				NewSolve(SolveOne(gameBoard))
+			}
+		}
+		else
+			SetFillBar(tempFill)
+	}
+
+	let pruchaseFuncs = [
+		new pruchaseFunc("Clicker", PurchaseClicker)
+	]
+
+
+
+	function LoadAllResources() {
+
+		currencys.map((currency, index, currencys) => {
+			currencys[index].Value = LoadResources(currency.Name)
+		})
+
+		return currencys
+	}
+
+	function collect(name, value, size, squares) {
+
+		let tempResources = resources
+
+		tempResources.find(resource => resource.Name == name).Value = CollectResources(name, value)
+
+		SetResources(tempResources)
+		NewGame(size, squares)
+	}
 
 	function handleClick(x, y) {
 		if (gameBoard == null) {
@@ -138,7 +220,7 @@ function App() {
 				<div>
 					<DisplayResources resources={resources} ></DisplayResources>
 					<NumberInput selectedNumber={selectedNumber} size={size} callBack={handleNumberClick} />
-					<div className="sudoku" >
+					<div className="sudoku">
 						<Sudoku
 							size={size}
 							squares={squares}
@@ -151,17 +233,38 @@ function App() {
 							squares={squares}
 							size={size}
 							collect={collect}
-							setboard={NewSolve}
-							board={gameBoard}>
-						</Complete>
+							clickBar={clickBar}
+							fillbar={FillBar}
+						></Complete>
 					</div>
 				</div>
 				<div>
-					<Shop resources={resources}></Shop>
+					<Shop resources={resources} pruchaseFuncs={pruchaseFuncs}></Shop>
 				</div>
 			</div>
 		</div>
 	)
 }
+
+function useInterval(inc, amount, active) {
+	const savedCallback = useRef();
+
+	useEffect(() => {
+		savedCallback.current = inc.CallBack;
+	})
+
+	useEffect(() => {
+		if (active) {
+			function tick() {
+				savedCallback.current(amount);
+			}
+
+			let id = setInterval(tick, inc.Interval);
+			return () => clearInterval(id);
+		}
+	} );
+}
+
+
 
 export default App;
