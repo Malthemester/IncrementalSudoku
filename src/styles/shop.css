@@ -24,8 +24,10 @@
     margin-bottom: 3px;
     margin-top: 3px;
     position: relative;
+}
 
-    
+.shopBT:disabled {
+    background-color: #7c7c7c; /* Green */
 }
 
 .tooltiptext {

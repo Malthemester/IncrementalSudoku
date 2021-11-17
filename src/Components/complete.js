@@ -9,23 +9,6 @@ export default function DesplaySolved(props) {
         height: "100%"
     }
 
-
-    function clickBar(barFill, solved) {
-        let tempFill = props.fillbar + barFill
-
-        if (tempFill >= 100) {
-            if (solved) {
-                props.setFillBar(100)
-            }
-            else{
-                props.setFillBar(0)
-                props.setboard(SolveOne(props.board))
-            }
-        }
-        else
-            props.setFillBar(tempFill)
-    }
-
     return (
         <div className="buttonList">
             {props.solved ?

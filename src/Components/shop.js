@@ -3,6 +3,9 @@ import "../styles/shop.css"
 // import {Purchase} from '../Components/complete'
 
 class item {
+
+    
+
     constructor(available, affordable, name, title, description, costs) {
         this.Available = available
         this.Affordable = affordable
@@ -22,6 +25,16 @@ class item {
         });
         return costText
     }
+
+    IsAffordable = (resources) => {
+        let affordable = true
+        this.Costs.forEach(price =>{
+            if (resources.find(resource => resource.Name == price[0]).Value < price[1]){
+                affordable = false
+            }
+        })
+        this.Affordable = affordable
+    }
 }
 
 const shopItems = [
@@ -29,10 +42,9 @@ const shopItems = [
         "Clicker",
         "Buy a clicker for the progress bar",
         "It will click ones a second",
-        [["4x4", 2]]),
-    // ClickFun = Purchase,
+        [["4x4", 1]]),
 
-    new item(true, true,
+    new item(true, false,
         "Clicker Speed",
         "Upgrade the clickers speed",
         "It will click faster",
@@ -42,7 +54,7 @@ const shopItems = [
         "Clicker sterngth",
         "Upgrade the clickers sterngth",
         "It will click stronger",
-        [["4x4", 3]])
+        [["4x4", 50]])
 
     // clicker_speed: false,
     // clicker_strength: false,
@@ -64,8 +76,8 @@ function buyUint(item) {
         return
     }
 
-    return (
-        <button disabled={item.Affordable} onClick={() => item.ClickFun()} className="shopBT" type="button">{item.Name}
+        return (
+        <button disabled={!item.Affordable} onClick={() => item.ClickFun(item.Costs)} className="shopBT" type="button">{item.Name}
             <div className="tooltiptext">
                 <div className="description">{item.Title}</div>
                 <div className="description">{item.CostText()}</div>
@@ -78,9 +90,6 @@ function buyUint(item) {
 export default function Shop(props) {
 
     const [Shop, SetShop] = useState(shopItems)
-
-    useEffect(() => {
-    }, [])
 
     return (
         <div className="shop">
@@ -95,12 +104,10 @@ export default function Shop(props) {
                 if(pruchaseFunc != undefined)
                     shopItem.ClickFun = pruchaseFunc.Func
 
+                    shopItem.IsAffordable(props.resources)
+
                 return buyUint(shopItem)
             })}
-
-            {/* {buyUint(true, false, "Clicker", "Buy a clicker for the progress bar", "4x4: 2", "It will click [1] a second")} */}
-
-            {/* {buyUint(true, false, "AI", "Buy a clicker for the progress bar", "4x4: 5", "It will click [1] a second")} */}
 
         </div>
     )

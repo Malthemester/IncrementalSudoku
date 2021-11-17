@@ -15,7 +15,7 @@ import { SolveOne } from './HelperFunctions/solve'
 let seleNumber = 1
 
 function App() {
-	let remove = 2
+	let remove = 7
 	let size = 4
 	let squares = 2
 
@@ -41,32 +41,16 @@ function App() {
 			new Resource("9x9")
 		]
 
-	class Incrementel {
-		constructor(name, interval, amount, callBack, active) {
-			this.Name = name
-			this.Interval = interval
-			this.Amount = amount
-			this.CallBack = callBack
-			this.Active = active
-		}
-	}
-
-	let incrementelsArr = [
-		new Incrementel("clicker", 50, 0.5, clickBar, false),
-		new Incrementel("consloe", 1500, 2, consloeTest, true)
-	]
-
-
 	const [selectedNumber, SetSelectedNumber] = useState(seleNumber)
 	const [gameBoard, SetGameBoard] = useState(Array(size).fill(Array(size).fill(null)))
 	const [resources, SetResources] = useState(currencys)
 	const [solved, SetSolved] = useState(false)
 	const [FillBar, SetFillBar] = useState(0)
-	const [Amount, SetAmount] = useState(1)
-	const [Active, SetActive] = useState([incrementelsArr[0].Active, incrementelsArr[1].Active])
+	const [Amounts, SetAmounts] = useState([0.3])
+	const [Actives, SetActives] = useState([false])
+	const [Intervals, SetIntervals] = useState([40])
 
 	useEffect(() => {
-
 		GetIncrementels()
 
 		let savedBoard = localStorage.getItem("curBoard")
@@ -86,16 +70,15 @@ function App() {
 		SetSolved(CheckSukoku(size, gameBoard, squares))
 	}, [gameBoard])
 
-	useEffect(() => {
-		SetSolved(CheckSukoku(size, gameBoard, squares))
-	}, [resources])
+	useInterval(clickBar, Amounts[0], Actives[0], Intervals[0])
+
 
 	function GetIncrementels() {
 		let clicker = LoadResources("clicker")
-		let temtActive = Active
+		let temtActive = Actives
 		temtActive[0] = clicker != 0 ? true : false
 
-		SetActive(temtActive)
+		SetActives(temtActive)
 	}
 
 	function NewGame(size, squares) {
@@ -105,27 +88,20 @@ function App() {
 		SaveBoard(newBoard, "curBoard")
 	}
 
+	function PurchaseClicker(cost) {
+		let tempResources = resources
 
-	function consloeTest() {
-		console.log("cool")
-	}
-	let incrementel1 = new Incrementel("clicker", 50, 0.5, clickBar, true)
+		tempResources[0].Value = tempResources[0].Value - cost[0][1]
+		SetResources([...tempResources])
+		SaveResources(cost[0][0],tempResources[0].Value)
 
-
-	function PurchaseClicker() {
-		let temtActive = Active
-
+		let temtActive = Actives
 		temtActive[0] = true
-
-		SaveResources("clicker",true)
-		SetActive(temtActive)
+		SaveResources("clicker", true)
+		SetActives(temtActive)
 	}
 
-	useInterval(incrementelsArr[0], Amount, Active[0])
-
-	incrementel1.Amount = 1
-
-	class pruchaseFunc {
+	class PruchaseFunc {
 		constructor(name, func) {
 			this.Name = name
 			this.Func = func
@@ -149,10 +125,8 @@ function App() {
 	}
 
 	let pruchaseFuncs = [
-		new pruchaseFunc("Clicker", PurchaseClicker)
+		new PruchaseFunc("Clicker", PurchaseClicker)
 	]
-
-
 
 	function LoadAllResources() {
 
@@ -212,7 +186,6 @@ function App() {
 		};
 	}, []);
 
-
 	return (
 		<div>
 			<Header></Header>
@@ -246,11 +219,11 @@ function App() {
 	)
 }
 
-function useInterval(inc, amount, active) {
+function useInterval(callBack, amount, active, interval) {
 	const savedCallback = useRef();
 
 	useEffect(() => {
-		savedCallback.current = inc.CallBack;
+		savedCallback.current = callBack;
 	})
 
 	useEffect(() => {
@@ -259,12 +232,10 @@ function useInterval(inc, amount, active) {
 				savedCallback.current(amount);
 			}
 
-			let id = setInterval(tick, inc.Interval);
+			let id = setInterval(tick, interval);
 			return () => clearInterval(id);
 		}
-	} );
+	});
 }
-
-
 
 export default App;
