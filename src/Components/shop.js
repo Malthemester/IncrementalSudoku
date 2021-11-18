@@ -1,18 +1,17 @@
 import { useState, useEffect } from "react"
+import { LoadResources } from "../HelperFunctions/saveValue"
 import "../styles/shop.css"
 // import {Purchase} from '../Components/complete'
 
-class item {
-
-    
-
-    constructor(available, affordable, name, title, description, costs) {
+class Item {
+    constructor(available, affordable, name, title, description, costs, maxTimesPurchase) {
         this.Available = available
         this.Affordable = affordable
         this.Name = name
         this.Title = title
         this.Description = description
         this.Costs = costs
+        this.MaxTimesPurchase = maxTimesPurchase
     }
 
     ClickFun = () => { }
@@ -35,26 +34,36 @@ class item {
         })
         this.Affordable = affordable
     }
+
+    IsPurchase = () => {
+    
+    let tempPurchase = LoadResources(this.Name)
+
+        if (tempPurchase >= this.MaxTimesPurchase){
+            this.Available = false
+        }
+    }
+
 }
 
 const shopItems = [
-    new item(true, false,
+    new Item(true, false,
         "Clicker",
         "Buy a clicker for the progress bar",
         "It will click ones a second",
-        [["4x4", 1]]),
+        [["4x4", 1]], 1),
 
-    new item(true, false,
+    new Item(true, false,
         "Clicker Speed",
         "Upgrade the clickers speed",
         "It will click faster",
-        [["4x4", 3], ["9x9", 1]]),
+        [["4x4", 3]], 5),
 
-    new item(false, false,
+    new Item(false, false,
         "Clicker sterngth",
         "Upgrade the clickers sterngth",
         "It will click stronger",
-        [["4x4", 50]])
+        [["4x4", 50], ["9x9", 1]], 3)
 
     // clicker_speed: false,
     // clicker_strength: false,
@@ -104,7 +113,8 @@ export default function Shop(props) {
                 if(pruchaseFunc != undefined)
                     shopItem.ClickFun = pruchaseFunc.Func
 
-                    shopItem.IsAffordable(props.resources)
+                shopItem.IsAffordable(props.resources)
+                shopItem.IsPurchase()
 
                 return buyUint(shopItem)
             })}

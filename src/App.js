@@ -74,7 +74,7 @@ function App() {
 
 
 	function GetIncrementels() {
-		let clicker = LoadResources("clicker")
+		let clicker = LoadResources("Clicker")
 		let temtActive = Actives
 		temtActive[0] = clicker != 0 ? true : false
 
@@ -95,10 +95,10 @@ function App() {
 		SetResources([...tempResources])
 		SaveResources(cost[0][0],tempResources[0].Value)
 
-		let temtActive = Actives
-		temtActive[0] = true
-		SaveResources("clicker", true)
-		SetActives(temtActive)
+		let tempActive = Actives
+		tempActive[0] = true
+		SaveResources("Clicker", 1)
+		SetActives(tempActive)
 	}
 
 	class PruchaseFunc {
