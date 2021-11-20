@@ -17,8 +17,8 @@ export default function DesplaySolved(props) {
 
             <button className="button" type="button" onClick={() => props.newGame(props.size, props.squares)}>New Sudoku</button>
 
-            <div id="Barfill" onClick={() => props.clickBar(5)}>
-                <div style={fill} > </div>
+            <div id="Barfill" onClick={() => props.clickBar(props.clickAmount)}>
+                <div style={fill}> </div>
             </div>
         </div>
     )

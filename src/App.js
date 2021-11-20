@@ -2,20 +2,19 @@ import './App.css';
 import Sudoku from './Components/sudoku'
 import NumberInput from './Components/numberInput'
 import Complete from './Components/complete'
-import { MakeSudoku, RemoveNumbers, CheckSukoku } from './HelperFunctions/generatorSudoku'
-import { useEffect, useState, useRef } from "react"
 import Header from './Components/header'
 import DisplayResources from './Components/resources'
+import { MakeSudoku, RemoveNumbers, CheckSukoku } from './HelperFunctions/generatorSudoku'
+import { useEffect, useState, useRef } from "react"
 import { SaveBoard, LocalToArray, LoadResources, SaveResources } from './HelperFunctions/saveValue'
 import { CollectResources } from './HelperFunctions/getResources'
-import Shop from './Components/shop'
-// import {Interval, useInterval} from './HelperFunctions/interval'
+import { Shop, shopItems } from './Components/shop'
 import { SolveOne } from './HelperFunctions/solve'
 
 let seleNumber = 1
 
 function App() {
-	let remove = 7
+	let remove = 10
 	let size = 4
 	let squares = 2
 
@@ -46,9 +45,9 @@ function App() {
 	const [resources, SetResources] = useState(currencys)
 	const [solved, SetSolved] = useState(false)
 	const [FillBar, SetFillBar] = useState(0)
-	const [Amounts, SetAmounts] = useState([0.3])
+	const [Amounts, SetAmounts] = useState([1])
 	const [Actives, SetActives] = useState([false])
-	const [Intervals, SetIntervals] = useState([40])
+	const [Intervals, SetIntervals] = useState([1000])
 
 	useEffect(() => {
 		GetIncrementels()
@@ -72,13 +71,23 @@ function App() {
 
 	useInterval(clickBar, Amounts[0], Actives[0], Intervals[0])
 
-
 	function GetIncrementels() {
-		let clicker = LoadResources("Clicker")
-		let temtActive = Actives
-		temtActive[0] = clicker != 0 ? true : false
+		let shop = shopItems
+		let tempActives = Actives
+		let tempIntervals = Intervals
+		let tempAmounts = Amounts
 
-		SetActives(temtActive)
+		let clicker = LoadResources(shop[0].Name)
+		let clickerSpeed = LoadResources(shop[1].Name)
+		let clickerStrength = LoadResources(shop[2].Name)
+		
+		tempActives[0] = clicker > 0
+		tempIntervals[0] = shop[1].IncremenAmount(clickerSpeed)
+		tempAmounts[0] = shop[2].IncremenAmount(clickerStrength)
+		
+		SetIntervals(tempIntervals)
+		SetActives(tempActives)
+		SetAmounts(tempAmounts)
 	}
 
 	function NewGame(size, squares) {
@@ -88,24 +97,51 @@ function App() {
 		SaveBoard(newBoard, "curBoard")
 	}
 
-	function PurchaseClicker(cost) {
+
+	function Purchase(costs, keyName, max) {
+		let tempMax = LoadResources(keyName)
+		SaveResources(keyName, tempMax + 1)
+
+		let tempResource = LoadResources(keyName)
+		if (tempResource >= max) {
+			return
+		}
+
 		let tempResources = resources
 
-		tempResources[0].Value = tempResources[0].Value - cost[0][1]
-		SetResources([...tempResources])
-		SaveResources(cost[0][0],tempResources[0].Value)
+		costs.forEach(price => {
+			let resourceIndex = tempResources.findIndex(resource => resource.Name == price[0])
+			tempResources[resourceIndex].Value = tempResources[resourceIndex].Value - price[1]
+			SaveResources(price[0], tempResources[resourceIndex].Value)
+		})
 
-		let tempActive = Actives
-		tempActive[0] = true
-		SaveResources("Clicker", 1)
-		SetActives(tempActive)
+		SetResources([...tempResources])
 	}
 
-	class PruchaseFunc {
-		constructor(name, func) {
-			this.Name = name
-			this.Func = func
-		}
+	function PurchaseClicker(cost, keyName, max) {
+		Purchase(cost, keyName, max)
+		let tempActive = Actives
+		tempActive[0] = true
+		SetActives([...tempActive])
+	}
+
+	function PurchaseClickerSpeed(cost, keyName, max) {
+		Purchase(cost, keyName, max)
+		let purchaseAmount = LoadResources(keyName)
+
+		let tempIntervals = Intervals
+		tempIntervals[0] = shopItems[1].IncremenAmount(purchaseAmount)
+
+		SetIntervals([...tempIntervals])
+	}
+
+	function PurchaseClickerStrengh(cost, keyName, max) {
+		Purchase(cost, keyName, max)
+
+		let purchaseAmount = LoadResources(keyName)
+		let tempAmounts = Amounts
+		tempAmounts[0] = shopItems[2].IncremenAmount(purchaseAmount)
+		SetAmounts([...tempAmounts])
 	}
 
 	function clickBar(barFill) {
@@ -124,12 +160,20 @@ function App() {
 			SetFillBar(tempFill)
 	}
 
+	class PruchaseFunc {
+		constructor(name, func) {
+			this.Name = name
+			this.Func = func
+		}
+	}
+
 	let pruchaseFuncs = [
-		new PruchaseFunc("Clicker", PurchaseClicker)
+		new PruchaseFunc(shopItems[0].Name, PurchaseClicker),
+		new PruchaseFunc(shopItems[1].Name, PurchaseClickerSpeed),
+		new PruchaseFunc(shopItems[2].Name, PurchaseClickerStrengh)
 	]
 
 	function LoadAllResources() {
-
 		currencys.map((currency, index, currencys) => {
 			currencys[index].Value = LoadResources(currency.Name)
 		})
@@ -208,6 +252,7 @@ function App() {
 							collect={collect}
 							clickBar={clickBar}
 							fillbar={FillBar}
+							clickAmount={Amounts[0]}
 						></Complete>
 					</div>
 				</div>
