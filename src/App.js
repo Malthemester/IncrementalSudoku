@@ -14,7 +14,7 @@ import { SolveOne } from './HelperFunctions/solve'
 let seleNumber = 1
 
 function App() {
-	let remove = 10
+	let remove = 9
 	let size = 4
 	let squares = 2
 
@@ -227,7 +227,7 @@ function App() {
 			return
 		}
 		let tempGameBoard = [...gameBoard]
-		tempGameBoard[solve[0]][solve[1]] = String(solve[2])
+		tempGameBoard[solve[0]][solve[1]] = String(solve[2] + "og")
 		SetGameBoard(tempGameBoard)
 		SaveBoard(tempGameBoard, "curBoard")
 	}

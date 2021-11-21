@@ -88,7 +88,7 @@ export const shopItems = [
         () => 1,
         () => true),
 
-    new Item(true, false,
+    new Item(false, false,
         "Clicker Speed",
         "Upgrade the clickers speed",
         `The clicker vill click [] faster`,
@@ -122,7 +122,7 @@ export const shopItems = [
         "Increase Points from 4x4",
         "It will increase the points gaind by []",
         [["4x4", 50]], [50], 10,
-        ["Clicker", "Clicker Speed"],
+        ["Clicker", "Clicker Speed", "Auto Complete"],
         (startPrice, count) => Math.round(50 + Math.pow((count*30),(1.2))),
         (count) => count + 1,
         "It will increase the points gaind by [", "]"),
