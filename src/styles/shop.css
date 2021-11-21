@@ -24,10 +24,13 @@
     margin-bottom: 3px;
     margin-top: 3px;
     position: relative;
+    cursor: pointer;
+
 }
 
 .shopBT:disabled {
     background-color: #7c7c7c; /* Green */
+    cursor: default;
 }
 
 .tooltiptext {

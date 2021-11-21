@@ -6,13 +6,14 @@ export default function DesplaySolved(props) {
     const fill = {
         backgroundColor: "crimson",
         width: `${props.fillbar}%`,
-        height: "100%"
+        height: "100%",
+        cursor: "pointer"
     }
 
     return (
         <div className="buttonList">
             {props.solved ?
-                <button className="button" type="button" onClick={() => props.collect("4x4", 1, props.size, props.squares)}>Complete</button> :
+                <button className="button" type="button" onClick={() => props.collect("4x4", props.collectAmount, props.size, props.squares)}>Complete</button> :
                 <button className="button" type="button" disabled>Incomplete</button>}
 
             <button className="button" type="button" onClick={() => props.newGame(props.size, props.squares)}>New Sudoku</button>

@@ -45,8 +45,8 @@ function App() {
 	const [resources, SetResources] = useState(currencys)
 	const [solved, SetSolved] = useState(false)
 	const [FillBar, SetFillBar] = useState(0)
-	const [Amounts, SetAmounts] = useState([1])
-	const [Actives, SetActives] = useState([false])
+	const [Amounts, SetAmounts] = useState([1, 1])
+	const [Actives, SetActives] = useState([false, false])
 	const [Intervals, SetIntervals] = useState([1000])
 
 	useEffect(() => {
@@ -71,19 +71,22 @@ function App() {
 
 	useInterval(clickBar, Amounts[0], Actives[0], Intervals[0])
 
+	useEffect(() => {
+		if (Actives[1] && solved)
+			collect("4x4",Amounts[1],size,squares)
+	}, [solved])
+
 	function GetIncrementels() {
 		let shop = shopItems
 		let tempActives = Actives
 		let tempIntervals = Intervals
 		let tempAmounts = Amounts
-
-		let clicker = LoadResources(shop[0].Name)
-		let clickerSpeed = LoadResources(shop[1].Name)
-		let clickerStrength = LoadResources(shop[2].Name)
 		
-		tempActives[0] = clicker > 0
-		tempIntervals[0] = shop[1].IncremenAmount(clickerSpeed)
-		tempAmounts[0] = shop[2].IncremenAmount(clickerStrength)
+		tempActives[0] = LoadResources(shop[0].Name) > 0
+		tempIntervals[0] = shop[1].IncremenAmount(LoadResources(shop[1].Name))
+		tempAmounts[0] = shop[2].IncremenAmount(LoadResources(shop[2].Name))
+		tempActives[1] = LoadResources(shop[3].Name) > 0
+		tempAmounts[1] = shop[4].IncremenAmount(LoadResources(shop[4].Name))
 		
 		SetIntervals(tempIntervals)
 		SetActives(tempActives)
@@ -144,6 +147,22 @@ function App() {
 		SetAmounts([...tempAmounts])
 	}
 
+	function PurchaseCompleter(cost, keyName, max) {
+		Purchase(cost, keyName, max)
+		let tempActive = Actives
+		tempActive[1] = true
+		SetActives([...tempActive])
+	}
+
+	function PurchaseIncrease4x4(cost, keyName, max) {
+		Purchase(cost, keyName, max)
+
+		let purchaseAmount = LoadResources(keyName)
+		let tempAmounts = Amounts
+		tempAmounts[1] = shopItems[4].IncremenAmount(purchaseAmount)
+		SetAmounts([...tempAmounts])
+	}
+
 	function clickBar(barFill) {
 		let tempFill = FillBar + barFill
 
@@ -170,7 +189,9 @@ function App() {
 	let pruchaseFuncs = [
 		new PruchaseFunc(shopItems[0].Name, PurchaseClicker),
 		new PruchaseFunc(shopItems[1].Name, PurchaseClickerSpeed),
-		new PruchaseFunc(shopItems[2].Name, PurchaseClickerStrengh)
+		new PruchaseFunc(shopItems[2].Name, PurchaseClickerStrengh),
+		new PruchaseFunc(shopItems[3].Name, PurchaseCompleter),
+		new PruchaseFunc(shopItems[4].Name, PurchaseIncrease4x4)
 	]
 
 	function LoadAllResources() {
@@ -253,6 +274,7 @@ function App() {
 							clickBar={clickBar}
 							fillbar={FillBar}
 							clickAmount={Amounts[0]}
+							collectAmount={Amounts[1]}
 						></Complete>
 					</div>
 				</div>

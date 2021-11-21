@@ -36,6 +36,7 @@ body {
   font-size: 14px;
   display: block;
   margin-bottom: 3px;
+  cursor: pointer;
 }
 
 
@@ -45,10 +46,12 @@ body {
   user-select: none;
   width: 100px;
   height: 30px;
+  cursor: pointer;
 }
 
 .button:disabled {
   background-color: #7c7c7c; /* Green */
+  cursor: default;
 }
 
 .button:hover:enabled {
@@ -79,13 +82,14 @@ body {
 
 
 .radio-toolbar label {
-    display: inline-block;
-    background-color: #ddd;
-    padding: 4px 10.5px;
-    font-family: sans-serif, Arial;
-    font-size: 16px;
-    border: 1px solid #444;
-    border-radius: 4px;
+  display: inline-block;
+  background-color: #ddd;
+  padding: 4px 10.5px;
+  font-family: sans-serif, Arial;
+  font-size: 16px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .radio-toolbar label:hover {
@@ -115,6 +119,7 @@ table.sudokuTable td {
   width: 30px; 
   text-align: center; 
   padding: 0;
+  cursor: pointer;
 
 }
 

@@ -8,6 +8,7 @@ export default function Sudoku(props) {
 
 	const bold = {
 		fontWeight: 'bold',
+		cursor: "default"
 	  }
 
 	function getFild(value, i, j, callBack) {

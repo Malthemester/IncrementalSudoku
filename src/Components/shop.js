@@ -86,13 +86,13 @@ export const shopItems = [
         [["4x4", 1]], [1],
         1, [""],
         () => 1,
-        () => 2),
+        () => true),
 
     new Item(true, false,
         "Clicker Speed",
         "Upgrade the clickers speed",
         `The clicker vill click [] faster`,
-        [["4x4", 3]], [3], 30, 
+        [["4x4", 3]], [3], 30,
         ["Clicker"],
         (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.48)),
         (count) => 1000 - (Math.log2(count + 1) * 200),
@@ -102,32 +102,35 @@ export const shopItems = [
         "Clicker strength",
         "Upgrade the clickers strength",
         "It will click [] stronger",
-        [["4x4", 5]], [5], 20, 
+        [["4x4", 5]], [5], 20,
         ["Clicker", "Clicker Speed"],
         (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.51)),
         (count) => (Math.log2(count + 2.3) * 2) - 1,
-        "Clicks vill click [", "] stronger")
+        "Clicks vill click [", "] stronger"),
 
-    // new Item(false, false,
-    //     "Clicker strength",
-    //     "Upgrade the clickers strength",
-    //     "It will click [] stronger",
-    //     [["4x4", 50], ["9x9", 1]], 3)
+    new Item(false, false,
+        "Auto Completer",
+        "The sudoku vil now auto complete",
+        "It will click [] stronger",
+        [["4x4", 15]], [15], 1,
+        ["Clicker", "Clicker Speed"],
+        () => 15,
+        () => true),
 
+    new Item(false, false,
+        "Increase 4x4",
+        "Increase Points from 4x4",
+        "It will increase the points gaind by []",
+        [["4x4", 50]], [50], 10,
+        ["Clicker", "Clicker Speed"],
+        (startPrice, count) => Math.round(50 + Math.pow((count*30),(1.2))),
+        (count) => count + 1,
+        "It will increase the points gaind by [", "]"),
 
-    // clicker_speed: false,
-    // clicker_strength: false,
-
-    // increasePointsOn4x4: false,
     // increasePointsOn9x9: false,
-
-    // simpleAI: false,
-    // simpleAI_amount: false,
-    // simpleAI_speed: false,
 
     // New4x4: false,
     // New9x9: false
-    // Auto complet
 ]
 
 function buyUint(item) {
@@ -176,7 +179,7 @@ export function Shop(props) {
 
                 shopItem.IsAvailable()
                 shopItem.IsPurchase()
-                
+
                 if (shopItem.Text1)
                     shopItem.Description = DynamicDescription(shopItem)
 
