@@ -1,8 +1,8 @@
 import { LoadSolution, SaveResources } from "./saveValue"
 
-function SolveOne(board) {
+function SolveOne(board, id) {
 
-    let solveList = LoadSolution("curSolveList")
+    let solveList = LoadSolution(id + "curSolveList")
 
     if(solveList == "")
         return
@@ -15,7 +15,7 @@ function SolveOne(board) {
         if (board[trySolve[0]][trySolve[1]] != trySolve[2]) {
 
             solveList.shift()
-            SaveResources("curSolveList", solveList)
+            SaveResources(id + "curSolveList", solveList)
             
             return trySolve
         }

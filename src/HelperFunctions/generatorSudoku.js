@@ -170,7 +170,7 @@ function MarkOG(board) {
     }
 }
 
-function RemoveNumbers(board, remove) {
+function RemoveNumbers(board, remove, id) {
 
     let size = board.length
     let randomIndex = RandomNewIndex(size, remove)
@@ -185,7 +185,7 @@ function RemoveNumbers(board, remove) {
         board[removeIndex[0]][removeIndex[1]] = []
     });
 
-    SaveResources("curSolveList",solveList)
+    SaveResources(id + "curSolveList",solveList)
 
     MarkOG(board)
 

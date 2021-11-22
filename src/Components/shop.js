@@ -96,7 +96,7 @@ export const shopItems = [
         ["Clicker"],
         (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.48)),
         (count) => 1000 - (Math.log2(count + 1) * 200),
-        "The clicker vill click [", "] faster"),
+        "The clicker vill click [", "]ms faster"),
 
     new Item(false, false,
         "Clicker strength",
@@ -164,7 +164,7 @@ export function Shop(props) {
     return (
         <div className="shop">
             <div className="shopHeder">
-                Shop
+                {props.size + "x" + props.size} Shop
             </div>
 
             {Shop.map(shopItem => {
