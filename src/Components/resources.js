@@ -1,8 +1,8 @@
 import "../styles/resources.css"
 
-function resourcesRow(value, name, valuePerSecond, display){
+function resourcesRow(value, name, valuePerSecond, display) {
 
-    if(!display)
+    if (!display)
         return
 
     return (
@@ -15,8 +15,8 @@ function resourcesRow(value, name, valuePerSecond, display){
 
 }
 
-export default function DisplayResources(props){
-    
+export default function DisplayResources(props) {
+
     return (
         <dis>
             <table className="resource">
@@ -26,7 +26,7 @@ export default function DisplayResources(props){
                     <th></th>
 
                     {props.resources.map(resource => {
-                       return resourcesRow(resource.Value,resource.Name, (resource.Interval/1000) * resource.AmountPar, resource.Display)
+                        return resourcesRow(resource.Value, resource.Name, (resource.Interval / 1000) * resource.AmountPar, resource.Display)
                     })}
 
                 </tbody>

@@ -23,7 +23,7 @@ export default function Sudoku(props) {
 		}
 		else {
 			return (
-				<td key={`tdK${i}${j}`} onClick={() => callBack(i, j)}>
+				<td key={`tdK${i}${j}`} onClick={() => callBack(i, j, props.gameBoard, props.setGameBoard, props.id)}>
 					{value}
 				</td>)
 		}

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react"
 import { Board } from "./Components/board"
 import Header from './Components/header'
 import DisplayResources from './Components/resources'
+import { SaveBoard, LoadResources } from './HelperFunctions/saveValue'
 
 let seleNumber = 1
 
@@ -34,10 +35,14 @@ export default function App(paams) {
 	const [selectedNumber, SetSelectedNumber] = useState(seleNumber)
 
 	useEffect(() => {
+		SetResources(LoadAllResources())
+	}, [])
+
+	useEffect(() => {
 		const handleInput = (e) => {
 			if (e.key <= 9 && e.key != 0) {
-				SetSelectedNumber(e.key)
 				seleNumber = e.key
+				SetSelectedNumber(e.key)
 			}
 		}
 		document.addEventListener("keydown", handleInput);
@@ -47,9 +52,27 @@ export default function App(paams) {
 		};
 	}, []);
 
+	function LoadAllResources() {
+		currencys.map((currency, index, currencys) => {
+			currencys[index].Value = LoadResources(currency.Name)
+		})
+
+		return currencys
+	}
+
 	const handleNumberClick = (number) => {
 		seleNumber = number.target.value
 		SetSelectedNumber(number.target.value)
+	}
+
+	function handleClick(x, y, gameBoard, SetGameBoard, id) {
+		if (gameBoard == null) {
+			return
+		}
+		let tempGameBoard = [...gameBoard]
+		tempGameBoard[x][y] = String(seleNumber)
+		SetGameBoard([...tempGameBoard])
+		SaveBoard(tempGameBoard, id + "curBoard")
 	}
 
 	return (
@@ -66,8 +89,7 @@ export default function App(paams) {
 				remove={9}
 				resources={resources}
 				setResources={SetResources}
-				selectedNumber={selectedNumber}
-				setSelectedNumber={SetSelectedNumber}
+				handleClick={handleClick}
 				currencys={currencys}
 			></Board>
 
@@ -75,17 +97,13 @@ export default function App(paams) {
 				id={"2#"}
 				size={9}
 				squares={3}
-				remove={9}
+				remove={1}
 				resources={resources}
 				setResources={SetResources}
-				selectedNumber={selectedNumber}
-				setSelectedNumber={SetSelectedNumber}
+				handleClick={handleClick}
 				currencys={currencys}
 			></Board>
 		</div>
 	)
 
 }
-
-
-
