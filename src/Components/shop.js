@@ -21,12 +21,15 @@ class Item {
         this.Text2 = text2
     }
 
+    Id
+    Use
+
     PriceFunc = () => { }
     ClickFun = () => { }
     IncremenAmount = () => { }
 
     PriceNumber = () => {
-        let purchaseAmount = LoadResources(this.Name)
+        let purchaseAmount = LoadResources(this.Id + this.Name)
         this.Costs.forEach((price, index) => {
             this.Costs[index] = [this.Costs[index][0], this.PriceFunc(this.StartCosts[index], purchaseAmount)]
         })
@@ -56,7 +59,8 @@ class Item {
         let ready = true
 
         this.Priors.forEach((prior) => {
-            let tempPurchase = LoadResources(prior)
+            let key = this.DontUseId? prior : this.Id + prior
+            let tempPurchase = LoadResources(key)
 
             if (tempPurchase <= 0) {
                 ready = false
@@ -70,7 +74,7 @@ class Item {
 
     IsPurchase = () => {
 
-        let tempPurchase = LoadResources(this.Name)
+        let tempPurchase = LoadResources(this.Id + this.Name)
 
         if (tempPurchase >= this.MaxTimesPurchase) {
             this.Available = false
@@ -78,60 +82,78 @@ class Item {
     }
 }
 
-export const shopItems = [
-    new Item(true, false,
-        "Clicker",
-        "Buy a clicker for the progress bar",
-        "It will click ones a second",
-        [["4x4", 1]], [1],
-        1, [""],
-        () => 1,
-        () => true),
+export function shopItems(){
+    return [
+        new Item(true, false,
+            "Clicker",
+            "Buy a clicker for the progress bar",
+            "It will click ones a second",
+            [["4x4", 1]], [1],
+            1, [""],
+            () => 1,
+            () => true),
+    
+        new Item(false, false,
+            "Clicker Speed",
+            "Upgrade the clickers speed",
+            `The clicker vill click [] faster`,
+            [["4x4", 3]], [3], 25,
+            ["Clicker"],
+            (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.48)),
+            (count) => 1000 - (Math.log2(count + 1) * 210),
+            "The clicker vill click [", "]ms faster"),
+    
+        new Item(false, false,
+            "Clicker strength",
+            "Upgrade the clickers strength",
+            "It will click [] stronger",
+            [["4x4", 5]], [5], 20,
+            ["Clicker", "Clicker Speed"],
+            (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.51)),
+            (count) =>  1.13 + (Math.log2(count + 2.3) * 2.1) - 1,
+            "Clicks vill click [", "] stronger"),
+    
+        new Item(false, false,
+            "Auto Completer",
+            "The sudoku vil now auto complete",
+            "",
+            [["4x4", 15], ["9x9", 1]], [15, 1], 1,
+            ["Clicker", "Clicker Speed"],
+            (startPrice) => startPrice,
+            () => true),
+    
+        new Item(false, false,
+            "Increase 4x4",
+            "Increase Points from 4x4",
+            "It will increase the points gaind by []",
+            [["4x4", 50]], [50], 10,
+            ["Clicker", "Clicker Speed", "Auto Complete"],
+            (startPrice, count) => Math.round(50 + Math.pow((count * 30), (1.2))),
+            (count) => count + 1,
+            "It will increase the points gaind by [", "]"),
+    
+        // increasePointsOn9x9: false,
+    
+        // New4x4: false,
+        // New9x9: false
+    ]
+}  
 
-    new Item(false, false,
-        "Clicker Speed",
-        "Upgrade the clickers speed",
-        `The clicker vill click [] faster`,
-        [["4x4", 3]], [3], 30,
-        ["Clicker"],
-        (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.48)),
-        (count) => 1000 - (Math.log2(count + 1) * 200),
-        "The clicker vill click [", "]ms faster"),
+export function gobalShopItems(){
+    
+    let new9x9 = new Item(false, false,
+        "9x9 Sudoku",
+        "Buy a 9x9 sudoku",
+        "With this you can earn 9x9",
+        [["4x4", 50]], [50], 1, 
+        ["1#Clicker strength"],
+        (startPrice) => startPrice,
+        () => true)
 
-    new Item(false, false,
-        "Clicker strength",
-        "Upgrade the clickers strength",
-        "It will click [] stronger",
-        [["4x4", 5]], [5], 20,
-        ["Clicker", "Clicker Speed"],
-        (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.51)),
-        (count) => (Math.log2(count + 2.3) * 2) - 1,
-        "Clicks vill click [", "] stronger"),
+    new9x9.DontUseId = true
 
-    new Item(false, false,
-        "Auto Completer",
-        "The sudoku vil now auto complete",
-        "It will click [] stronger",
-        [["4x4", 15]], [15], 1,
-        ["Clicker", "Clicker Speed"],
-        () => 15,
-        () => true),
-
-    new Item(false, false,
-        "Increase 4x4",
-        "Increase Points from 4x4",
-        "It will increase the points gaind by []",
-        [["4x4", 50]], [50], 10,
-        ["Clicker", "Clicker Speed", "Auto Complete"],
-        (startPrice, count) => Math.round(50 + Math.pow((count*30),(1.2))),
-        (count) => count + 1,
-        "It will increase the points gaind by [", "]"),
-
-    // increasePointsOn9x9: false,
-
-    // New4x4: false,
-    // New9x9: false
-]
+    return [new9x9]
+}
 
 function buyUint(item) {
     if (!item.Available) {
@@ -139,7 +161,7 @@ function buyUint(item) {
     }
 
     return (
-        <button disabled={!item.Affordable} onClick={() => item.ClickFun(item.Costs, item.Name, item.MaxTimesPurchase)} className="shopBT" type="button">{item.Name}
+        <button disabled={!item.Affordable} onClick={() => item.ClickFun(item.Costs, item.Name, item.MaxTimesPurchase, item.Id)} className="shopBT" type="button">{item.Name}
             <div className="tooltiptext">
                 <div className="description">{item.Title}</div>
                 <div className="description">{item.CostText()}</div>
@@ -150,7 +172,7 @@ function buyUint(item) {
 }
 
 function DynamicDescription(item) {
-    let purchaseAmount = LoadResources(item.Name)
+    let purchaseAmount = LoadResources(item.Id + item.Name)
     let number = item.IncremenAmount(purchaseAmount + 1) - item.IncremenAmount(purchaseAmount)
     number = Math.abs(number.toFixed(2))
 
@@ -159,18 +181,21 @@ function DynamicDescription(item) {
 
 export function Shop(props) {
 
-    const [Shop, SetShop] = useState(shopItems)
+    let thisShopItems = props.items
+
+    const [Shop, SetShop] = useState(thisShopItems)
 
     return (
         <div className="shop">
             <div className="shopHeder">
-                {props.size + "x" + props.size} Shop
+                {props.name}
             </div>
 
             {Shop.map(shopItem => {
 
-                let pruchaseFunc = props.pruchaseFuncs.find(pruchaseFunc => pruchaseFunc.Name == shopItem.Name)
+                shopItem.Id = props.id
 
+                let pruchaseFunc = props.pruchaseFuncs.find(pruchaseFunc => pruchaseFunc.Name == shopItem.Name)
                 if (pruchaseFunc != undefined)
                     shopItem.ClickFun = pruchaseFunc.Func
 

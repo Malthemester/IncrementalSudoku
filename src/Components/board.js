@@ -13,10 +13,12 @@ export function Board(props) {
     let remove = props.remove
     let resources = props.resources
 
+    let shopItemsTemp = shopItems()
+
     const [gameBoard, SetGameBoard] = useState(Array(size).fill(Array(size).fill(null)))
     const [solved, SetSolved] = useState(false)
     const [FillBar, SetFillBar] = useState(0)
-    const [Amounts, SetAmounts] = useState([1, 1])
+    const [Amounts, SetAmounts] = useState([3, 1])
     const [Actives, SetActives] = useState([false, false])
     const [Intervals, SetIntervals] = useState([1000])
 
@@ -47,7 +49,7 @@ export function Board(props) {
     }, [solved])
 
     function GetIncrementels() {
-        let shop = shopItems
+        let shop = shopItemsTemp
         let tempActives = Actives
         let tempIntervals = Intervals
         let tempAmounts = Amounts
@@ -72,14 +74,13 @@ export function Board(props) {
 
 
     function Purchase(costs, keyName, max) {
+        
         let tempMax = LoadResources(keyName)
-        SaveResources(keyName, tempMax + 1)
-
-        let tempResource = LoadResources(keyName)
-        if (tempResource >= max) {
+        if (tempMax >= max) {
             return
         }
-
+        
+        SaveResources(keyName, tempMax + 1)
         let tempResources = resources
 
         costs.forEach(price => {
@@ -91,45 +92,45 @@ export function Board(props) {
         props.setResources([...tempResources])
     }
 
-    function PurchaseClicker(cost, keyName, max) {
-        Purchase(cost, keyName, max)
+    function PurchaseClicker(cost, keyName, max, id) {
+        Purchase(cost, id + keyName, max)
         let tempActive = Actives
         tempActive[0] = true
         SetActives([...tempActive])
     }
 
-    function PurchaseClickerSpeed(cost, keyName, max) {
-        Purchase(cost, keyName, max)
-        let purchaseAmount = LoadResources(keyName)
+    function PurchaseClickerSpeed(cost, keyName, max, id) {
+        Purchase(cost, id + keyName, max)
+        let purchaseAmount = LoadResources(props.id + keyName)
 
         let tempIntervals = Intervals
-        tempIntervals[0] = shopItems[1].IncremenAmount(purchaseAmount)
+        tempIntervals[0] = shopItemsTemp[1].IncremenAmount(purchaseAmount)
 
         SetIntervals([...tempIntervals])
     }
 
-    function PurchaseClickerStrengh(cost, keyName, max) {
-        Purchase(cost, keyName, max)
+    function PurchaseClickerStrengh(cost, keyName, max, id) {
+        Purchase(cost, id + keyName, max)
 
-        let purchaseAmount = LoadResources(keyName)
+        let purchaseAmount = LoadResources(props.id + keyName)
         let tempAmounts = Amounts
-        tempAmounts[0] = shopItems[2].IncremenAmount(purchaseAmount)
+        tempAmounts[0] = shopItemsTemp[2].IncremenAmount(purchaseAmount)
         SetAmounts([...tempAmounts])
     }
 
-    function PurchaseCompleter(cost, keyName, max) {
-        Purchase(cost, keyName, max)
+    function PurchaseCompleter(cost, keyName, max, id) {
+        Purchase(cost, id + keyName, max)
         let tempActive = Actives
         tempActive[1] = true
         SetActives([...tempActive])
     }
 
     function PurchaseIncrease4x4(cost, keyName, max) {
-        Purchase(cost, keyName, max)
+        Purchase(cost, props.id + keyName, max)
 
-        let purchaseAmount = LoadResources(keyName)
+        let purchaseAmount = LoadResources(props.id + keyName)
         let tempAmounts = Amounts
-        tempAmounts[1] = shopItems[4].IncremenAmount(purchaseAmount)
+        tempAmounts[1] = shopItemsTemp[4].IncremenAmount(purchaseAmount)
         SetAmounts([...tempAmounts])
     }
 
@@ -157,11 +158,11 @@ export function Board(props) {
     }
 
     let pruchaseFuncs = [
-        new PurchaseFunc(shopItems[0].Name, PurchaseClicker),
-        new PurchaseFunc(shopItems[1].Name, PurchaseClickerSpeed),
-        new PurchaseFunc(shopItems[2].Name, PurchaseClickerStrengh),
-        new PurchaseFunc(shopItems[3].Name, PurchaseCompleter),
-        new PurchaseFunc(shopItems[4].Name, PurchaseIncrease4x4)
+        new PurchaseFunc(shopItemsTemp[0].Name, PurchaseClicker),
+        new PurchaseFunc(shopItemsTemp[1].Name, PurchaseClickerSpeed),
+        new PurchaseFunc(shopItemsTemp[2].Name, PurchaseClickerStrengh),
+        new PurchaseFunc(shopItemsTemp[3].Name, PurchaseCompleter),
+        new PurchaseFunc(shopItemsTemp[4].Name, PurchaseIncrease4x4)
     ]
 
     function collect(name, value, size, squares) {
@@ -215,7 +216,13 @@ export function Board(props) {
                     </div>
                 </div>
                 <div>
-                    <Shop resources={resources} pruchaseFuncs={pruchaseFuncs} size={size}></Shop>
+                    <Shop 
+                        resources={resources} 
+                        pruchaseFuncs={pruchaseFuncs} 
+                        name={size + "x" + size} 
+                        id={props.id} 
+                        items={shopItemsTemp}
+                    ></Shop>
                 </div>
             </div>
         </div>

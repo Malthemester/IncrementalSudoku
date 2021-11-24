@@ -1,12 +1,11 @@
 .shop{
-    margin-left: 14px;
+    margin-left: 10px;
     width: 100%;
-
 }
 
 .shopHeder{
     border-bottom: 2px solid rgb(122, 18, 182);
-    width: 100%;
+    width: 95%;
     max-width: 350px;
 }
 

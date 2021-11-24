@@ -4,7 +4,8 @@ import { useEffect, useState, useRef } from "react"
 import { Board } from "./Components/board"
 import Header from './Components/header'
 import DisplayResources from './Components/resources'
-import { SaveBoard, LoadResources } from './HelperFunctions/saveValue'
+import { SaveBoard, LoadResources, SaveResources } from './HelperFunctions/saveValue'
+import { Shop, gobalShopItems } from './Components/shop'
 
 let seleNumber = 1
 
@@ -33,9 +34,11 @@ export default function App(paams) {
 
 	const [resources, SetResources] = useState(currencys)
 	const [selectedNumber, SetSelectedNumber] = useState(seleNumber)
+	const [GobalsActives, SetGobalsActives] = useState([false])
 
 	useEffect(() => {
-		SetResources(LoadAllResources())
+		SetResources([...LoadAllResources()])
+		GetIncrementels()
 	}, [])
 
 	useEffect(() => {
@@ -51,6 +54,14 @@ export default function App(paams) {
 			document.removeEventListener("keydown", handleInput);
 		};
 	}, []);
+
+	function GetIncrementels() {
+		let tempActives = GobalsActives
+
+		tempActives[0] = LoadResources(gobalShopItemsTemp[0].Name) > 0
+
+		SetGobalsActives(tempActives)
+	}
 
 	function LoadAllResources() {
 		currencys.map((currency, index, currencys) => {
@@ -75,6 +86,45 @@ export default function App(paams) {
 		SaveBoard(tempGameBoard, id + "curBoard")
 	}
 
+	let gobalShopItemsTemp = gobalShopItems()
+
+	class PurchaseFunc {
+		constructor(name, func) {
+			this.Name = name
+			this.Func = func
+		}
+	}
+
+	let pruchaseFuncs = [
+		new PurchaseFunc(gobalShopItemsTemp[0].Name, Purchase9x9),
+	]
+
+	function Purchase(costs, keyName, max) {
+
+		let tempMax = LoadResources(keyName)
+		if (tempMax >= max) {
+			return
+		}
+
+		SaveResources(keyName, tempMax + 1)
+		let tempResources = resources
+
+		costs.forEach(price => {
+			let resourceIndex = tempResources.findIndex(resource => resource.Name == price[0])
+			tempResources[resourceIndex].Value = tempResources[resourceIndex].Value - price[1]
+			SaveResources(price[0], tempResources[resourceIndex].Value)
+		})
+
+		SetResources([...tempResources])
+	}
+
+	function Purchase9x9(costs, keyName, max, id) {
+		Purchase(costs,id + keyName, max)
+		let tempActive = GobalsActives
+		tempActive[0] = true
+		SetGobalsActives([...tempActive])
+	}
+
 	return (
 		<div>
 			<Header></Header>
@@ -82,27 +132,48 @@ export default function App(paams) {
 			<DisplayResources resources={resources} ></DisplayResources>
 			<NumberInput selectedNumber={selectedNumber} size={9} callBack={handleNumberClick} />
 
-			<Board
-				id={"1#"}
-				size={4}
-				squares={2}
-				remove={9}
-				resources={resources}
-				setResources={SetResources}
-				handleClick={handleClick}
-				currencys={currencys}
-			></Board>
+			<div className="gameshop">
 
-			<Board
-				id={"2#"}
-				size={9}
-				squares={3}
-				remove={1}
-				resources={resources}
-				setResources={SetResources}
-				handleClick={handleClick}
-				currencys={currencys}
-			></Board>
+				<div >
+					<Board
+						id={"1#"}
+						size={4}
+						squares={2}
+						remove={9}
+						resources={resources}
+						setResources={SetResources}
+						handleClick={handleClick}
+						currencys={currencys}
+					></Board>
+
+					{
+						GobalsActives[0] ?
+							<Board
+								id={"2#"}
+								size={9}
+								squares={3}
+								remove={40}
+								resources={resources}
+								setResources={SetResources}
+								handleClick={handleClick}
+								currencys={currencys}
+							></Board>
+							: null
+					}
+
+
+				</div>
+				<div>
+					<Shop
+						resources={resources}
+						pruchaseFuncs={pruchaseFuncs}
+						name={"Gobal Shop"}
+						id={"0#"}
+						items={gobalShopItemsTemp}
+					></Shop>
+				</div>
+			</div>
+
 		</div>
 	)
 
