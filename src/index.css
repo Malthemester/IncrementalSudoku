@@ -47,6 +47,7 @@ body {
   width: 100px;
   height: 30px;
   cursor: pointer;
+  display: flex;
 }
 
 .button:disabled {
@@ -130,10 +131,11 @@ table.sudokuTable td {
   border: solid thin; 
   height: 30px; 
   width: 30px; 
+  min-width: 30px;
+  min-height: 30px;
   text-align: center; 
   padding: 0;
   cursor: pointer;
-  
 }
 
 
@@ -161,4 +163,41 @@ li a {
 
 li a:hover {
   background-color: #111;
+}
+
+.highlight { 
+  background-color: rgb(243, 231, 165);
+}
+
+
+
+.wapper{
+  width: 30px;
+  height: 30px;
+}
+
+.clicker{
+  position: relative;
+  animation: click infinite;
+  animation-delay: 100ms;
+  animation-duration: 5000ms;
+}
+
+.clickerSize{
+  margin-top: 8px;
+  width: 21px;
+  height: 17px;
+}
+
+
+@keyframes click {
+  0% {
+    left: 0px;
+  }
+  50% {
+    animation-timing-function: cubic-bezier(0.99, 0.08, 0.85, 0.6);
+    left: 20px;  
+
+  }
+  100% {left: 0px;}
 }

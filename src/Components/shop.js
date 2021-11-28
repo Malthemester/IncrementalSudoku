@@ -59,7 +59,7 @@ class Item {
         let ready = true
 
         this.Priors.forEach((prior) => {
-            let key = this.DontUseId? prior : this.Id + prior
+            let key = this.DontUseId ? prior : this.Id + prior
             let tempPurchase = LoadResources(key)
 
             if (tempPurchase <= 0) {
@@ -82,7 +82,7 @@ class Item {
     }
 }
 
-export function shopItems(){
+export function shopItems() {
     return [
         new Item(true, false,
             "Clicker",
@@ -92,60 +92,64 @@ export function shopItems(){
             1, [""],
             () => 1,
             () => true),
-    
+
         new Item(false, false,
             "Clicker Speed",
             "Upgrade the clickers speed",
             `The clicker vill click [] faster`,
-            [["4x4", 3]], [3], 25,
+            [["4x4", 2]], [2], 25,
             ["Clicker"],
-            (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.48)),
-            (count) => 1000 - (Math.log2(count + 1) * 210),
+            (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.1)),
+            (count) => 1000 - (Math.log2(count + 1) * 213),
             "The clicker vill click [", "]ms faster"),
-    
+
         new Item(false, false,
             "Clicker strength",
             "Upgrade the clickers strength",
             "It will click [] stronger",
-            [["4x4", 5]], [5], 20,
+            [["4x4", 3]], [3], 20,
             ["Clicker", "Clicker Speed"],
-            (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.51)),
-            (count) =>  1.13 + (Math.log2(count + 2.3) * 2.1) - 1,
+            (startPrice, count) => Math.floor(startPrice + Math.pow(count, 1.15)),
+            (count) => 1.13 + (Math.log2(count + 2.3) * 2.1) - 1,
             "Clicks vill click [", "] stronger"),
-    
+
+        new Item(false, false,
+            "Highlighter",
+            "Highlight the next solved fild",
+            "",
+            [["4x4", 8]], [8], 1,
+            ["Clicker"],
+            (startPrice) => startPrice,
+            () => true),
+
         new Item(false, false,
             "Auto Completer",
             "The sudoku vil now auto complete",
             "",
-            [["4x4", 15], ["9x9", 1]], [15, 1], 1,
-            ["Clicker", "Clicker Speed"],
+            [["4x4", 12], ["9x9", 1]], [15, 1], 1,
+            ["Clicker", "Clicker Speed", "Clicker strength"],
             (startPrice) => startPrice,
             () => true),
-    
+
         new Item(false, false,
-            "Increase 4x4",
-            "Increase Points from 4x4",
+            "Increase points",
+            "Increase Points from this sudoku",
             "It will increase the points gaind by []",
-            [["4x4", 50]], [50], 10,
-            ["Clicker", "Clicker Speed", "Auto Complete"],
+            [["4x4", 15], ["9x9", 2]], [20], 10,
+            ["Clicker", "Clicker Speed", "Auto Completer"],
             (startPrice, count) => Math.round(50 + Math.pow((count * 30), (1.2))),
             (count) => count + 1,
-            "It will increase the points gaind by [", "]"),
-    
-        // increasePointsOn9x9: false,
-    
-        // New4x4: false,
-        // New9x9: false
+            "It will increase the points gaind by [", "]")
     ]
-}  
+}
 
-export function gobalShopItems(){
-    
+export function gobalShopItems() {
+
     let new9x9 = new Item(false, false,
         "9x9 Sudoku",
         "Buy a 9x9 sudoku",
         "With this you can earn 9x9",
-        [["4x4", 50]], [50], 1, 
+        [["4x4", 50]], [50], 1,
         ["1#Clicker strength"],
         (startPrice) => startPrice,
         () => true)

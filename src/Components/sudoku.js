@@ -9,13 +9,20 @@ export default function Sudoku(props) {
 	const bold = {
 		fontWeight: 'bold',
 		cursor: "default"
-	  }
+	}
 
 	function getFild(value, i, j, callBack) {
 
 		value = String(value)
 
-		if ( value != null && value.includes("og")) {
+
+		if (value != null && value.includes("h")) { 
+			return (
+				<td className="highlight" style={bold} key={`tdK${i}${j}`}  onClick={() => callBack(i, j, props.gameBoard, props.setGameBoard, props.id, props.amount)}>
+					{value.replace('h', '')}
+				</td>)
+		}
+		else if (value != null && value.includes("og")) {
 			return (
 				<td style={bold} key={`tdK${i}${j}`}>
 					{value.replace('og', '')}
@@ -23,7 +30,7 @@ export default function Sudoku(props) {
 		}
 		else {
 			return (
-				<td key={`tdK${i}${j}`} onClick={() => callBack(i, j, props.gameBoard, props.setGameBoard, props.id)}>
+				<td key={`tdK${i}${j}`} onClick={() => callBack(i, j, props.gameBoard, props.setGameBoard, props.id, props.amount)}>
 					{value}
 				</td>)
 		}
@@ -44,7 +51,7 @@ export default function Sudoku(props) {
 			let tds = []
 
 			for (let j = 0; j < props.size; j++) {
-				tds.push(getFild(props.value[i][j],i,j,props.callBack))
+				tds.push(getFild(props.value[i][j], i, j, props.callBack))
 			}
 			colGroup.push(<tr key={'trK' + i}>{tds}</tr>)
 

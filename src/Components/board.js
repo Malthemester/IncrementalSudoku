@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react"
 import { SaveBoard, LocalToArray, LoadResources, SaveResources } from '../HelperFunctions/saveValue'
 import { CollectResources } from '../HelperFunctions/getResources'
 import { Shop, shopItems } from './shop'
-import { SolveOne } from '../HelperFunctions/solve'
+import { SolveOne, IsInSolve } from '../HelperFunctions/solve'
 
 export function Board(props) {
     let size = props.size
@@ -18,8 +18,8 @@ export function Board(props) {
     const [gameBoard, SetGameBoard] = useState(Array(size).fill(Array(size).fill(null)))
     const [solved, SetSolved] = useState(false)
     const [FillBar, SetFillBar] = useState(0)
-    const [Amounts, SetAmounts] = useState([3, 1])
-    const [Actives, SetActives] = useState([false, false])
+    const [Amounts, SetAmounts] = useState([3, 2])
+    const [Actives, SetActives] = useState([false, false, false])
     const [Intervals, SetIntervals] = useState([1000])
 
     useEffect(() => {
@@ -39,6 +39,10 @@ export function Board(props) {
 
     useEffect(() => {
         SetSolved(CheckSukoku(size, gameBoard, squares))
+        
+        if (Actives[2])
+            HighlightFild()
+
     }, [gameBoard])
 
     useInterval(clickBar, Amounts[0], Actives[0], Intervals[0])
@@ -59,10 +63,25 @@ export function Board(props) {
         tempAmounts[0] = shop[2].IncremenAmount(LoadResources(props.id + shop[2].Name))
         tempActives[1] = LoadResources(props.id + shop[3].Name) > 0
         tempAmounts[1] = shop[4].IncremenAmount(LoadResources(props.id + shop[4].Name))
+        tempActives[2] = LoadResources(props.id + shop[5].Name) > 0
 
         SetIntervals(tempIntervals)
         SetActives(tempActives)
         SetAmounts(tempAmounts)
+    }
+
+    function HighlightFild(){
+        let nextSolve = SolveOne(gameBoard, props.id, true)
+        let tempGameBoard = [...gameBoard]
+        
+        if (nextSolve == null || 
+            tempGameBoard[nextSolve[0]][nextSolve[1]] == null || 
+            tempGameBoard[nextSolve[0]][nextSolve[1]].includes("h")) {
+            return
+        }
+        tempGameBoard[nextSolve[0]][nextSolve[1]] = tempGameBoard[nextSolve[0]][nextSolve[1]] + "h"
+        SetGameBoard(tempGameBoard)
+        SaveBoard(tempGameBoard, `${props.id}curBoard`)
     }
 
     function NewGame(size, squares) {
@@ -134,6 +153,13 @@ export function Board(props) {
         SetAmounts([...tempAmounts])
     }
 
+    function PurchaseHighlight(cost, keyName, max, id) {
+        Purchase(cost, id + keyName, max)
+        let tempActive = Actives
+        tempActive[2] = true
+        SetActives([...tempActive])
+    }
+
     function clickBar(barFill) {
         let tempFill = FillBar + barFill
 
@@ -162,7 +188,8 @@ export function Board(props) {
         new PurchaseFunc(shopItemsTemp[1].Name, PurchaseClickerSpeed),
         new PurchaseFunc(shopItemsTemp[2].Name, PurchaseClickerStrengh),
         new PurchaseFunc(shopItemsTemp[3].Name, PurchaseCompleter),
-        new PurchaseFunc(shopItemsTemp[4].Name, PurchaseIncrease4x4)
+        new PurchaseFunc(shopItemsTemp[4].Name, PurchaseIncrease4x4),
+        new PurchaseFunc(shopItemsTemp[5].Name, PurchaseHighlight)
     ]
 
     function collect(name, value, size, squares) {
@@ -175,8 +202,6 @@ export function Board(props) {
         NewGame(size, squares)
     }
 
-
-
     function NewSolve(solve) {
         if (solve == null) {
             return
@@ -187,7 +212,6 @@ export function Board(props) {
         SaveBoard(tempGameBoard, `${props.id}curBoard`)
     }
 
-
     return (
         <div>
             <div className="game">
@@ -197,6 +221,7 @@ export function Board(props) {
                             size={size}
                             squares={squares}
                             callBack={props.handleClick}
+                            amount={Amounts[1]}
                             value={gameBoard}
                             gameBoard={gameBoard}
                             setGameBoard={SetGameBoard}
@@ -212,6 +237,8 @@ export function Board(props) {
                             fillbar={FillBar}
                             clickAmount={Amounts[0]}
                             collectAmount={Amounts[1]}
+                            duration={Intervals[0]}
+                            actives={Actives[0]}
                         ></Complete>
                     </div>
                 </div>

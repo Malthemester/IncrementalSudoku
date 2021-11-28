@@ -6,10 +6,14 @@ import Header from './Components/header'
 import DisplayResources from './Components/resources'
 import { SaveBoard, LoadResources, SaveResources } from './HelperFunctions/saveValue'
 import { Shop, gobalShopItems } from './Components/shop'
+import { IsInSolve } from './HelperFunctions/solve'
+import {CollectResources} from './HelperFunctions/getResources'
 
 let seleNumber = 1
 
 export default function App(paams) {
+	let id = "0#"
+
 	class Resource {
 		Name = "name"
 		Value = 0
@@ -29,7 +33,7 @@ export default function App(paams) {
 	let currencys =
 		[
 			new Resource("4x4", 0, 0, 0, true),
-			new Resource("9x9", 0, 0, 0, true)
+			new Resource("9x9", 0, 0, 0, false)
 		]
 
 	const [resources, SetResources] = useState(currencys)
@@ -58,7 +62,7 @@ export default function App(paams) {
 	function GetIncrementels() {
 		let tempActives = GobalsActives
 
-		tempActives[0] = LoadResources(gobalShopItemsTemp[0].Name) > 0
+		tempActives[0] = LoadResources(id + gobalShopItemsTemp[0].Name) > 0
 
 		SetGobalsActives(tempActives)
 	}
@@ -66,6 +70,8 @@ export default function App(paams) {
 	function LoadAllResources() {
 		currencys.map((currency, index, currencys) => {
 			currencys[index].Value = LoadResources(currency.Name)
+			if (currencys[index].Value > 0)
+				currencys[index].Display = true
 		})
 
 		return currencys
@@ -76,14 +82,23 @@ export default function App(paams) {
 		SetSelectedNumber(number.target.value)
 	}
 
-	function handleClick(x, y, gameBoard, SetGameBoard, id) {
-		if (gameBoard == null) {
+	function handleClick(x, y, gameBoard, SetGameBoard, id, amount) {
+		if (gameBoard == null || gameBoard.lengt >= seleNumber) {
 			return
 		}
 		let tempGameBoard = [...gameBoard]
 		tempGameBoard[x][y] = String(seleNumber)
 		SetGameBoard([...tempGameBoard])
 		SaveBoard(tempGameBoard, id + "curBoard")
+		if(IsInSolve(id, `${x}${y}${seleNumber}`))
+		{
+			let tempResources = resources
+			let name = `${gameBoard.length}x${gameBoard.length}`
+
+			tempResources.find(resource => resource.Name == name).Value = CollectResources(name, amount)
+	
+			SetResources([...tempResources])
+		}
 	}
 
 	let gobalShopItemsTemp = gobalShopItems()
@@ -119,7 +134,7 @@ export default function App(paams) {
 	}
 
 	function Purchase9x9(costs, keyName, max, id) {
-		Purchase(costs,id + keyName, max)
+		Purchase(costs, id + keyName, max)
 		let tempActive = GobalsActives
 		tempActive[0] = true
 		SetGobalsActives([...tempActive])
@@ -130,7 +145,7 @@ export default function App(paams) {
 			<Header></Header>
 
 			<DisplayResources resources={resources} ></DisplayResources>
-			<NumberInput selectedNumber={selectedNumber} size={9} callBack={handleNumberClick} />
+			<NumberInput selectedNumber={selectedNumber} size={GobalsActives[0] ? 9 : 4} callBack={handleNumberClick} />
 
 			<div className="gameshop">
 
@@ -139,7 +154,7 @@ export default function App(paams) {
 						id={"1#"}
 						size={4}
 						squares={2}
-						remove={9}
+						remove={7}
 						resources={resources}
 						setResources={SetResources}
 						handleClick={handleClick}
@@ -152,7 +167,7 @@ export default function App(paams) {
 								id={"2#"}
 								size={9}
 								squares={3}
-								remove={40}
+								remove={45}
 								resources={resources}
 								setResources={SetResources}
 								handleClick={handleClick}
@@ -168,7 +183,7 @@ export default function App(paams) {
 						resources={resources}
 						pruchaseFuncs={pruchaseFuncs}
 						name={"Gobal Shop"}
-						id={"0#"}
+						id={id}
 						items={gobalShopItemsTemp}
 					></Shop>
 				</div>

@@ -1,10 +1,10 @@
 import { LoadSolution, SaveResources } from "./saveValue"
 
-function SolveOne(board, id) {
+function SolveOne(board, id, highlight = false) {
 
     let solveList = LoadSolution(id + "curSolveList")
 
-    if(solveList == "")
+    if (solveList == "")
         return
 
     solveList = solveList.split(",")
@@ -15,12 +15,26 @@ function SolveOne(board, id) {
         if (board[trySolve[0]][trySolve[1]] != trySolve[2]) {
 
             solveList.shift()
-            SaveResources(id + "curSolveList", solveList)
-            
+            if (!highlight)
+                SaveResources(id + "curSolveList", solveList)
+
             return trySolve
         }
         solveList.shift()
     }
 }
 
-export{SolveOne}
+function IsInSolve(id, checkFild){
+    let solveList = LoadSolution(id + "curSolveList")
+
+    if (solveList == "")
+        return
+
+    solveList = solveList.split(",")
+
+    let sovle = solveList.find(solve => solve == checkFild)
+
+    return sovle != undefined
+}
+
+export { SolveOne, IsInSolve }

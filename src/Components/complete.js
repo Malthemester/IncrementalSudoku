@@ -1,4 +1,4 @@
-import { SolveOne } from '../HelperFunctions/solve'
+import cursor from '../pointer.png';
 
 
 export default function DesplaySolved(props) {
@@ -10,6 +10,19 @@ export default function DesplaySolved(props) {
         cursor: "pointer"
     }
 
+    const clicker = {
+        animationDuration: `${props.duration}`,
+        margenTop: "8px",
+        width: "21px",
+        height: "17px"
+      }
+
+    const clickerSize = {
+        margenTop: "8px",
+        width: "21px",
+        height: "17px"
+      }
+
     return (
         <div className="buttonList">
             {props.solved ?
@@ -18,8 +31,15 @@ export default function DesplaySolved(props) {
 
             <button className="button" type="button" onClick={() => props.newGame(props.size, props.squares)}>New Sudoku</button>
 
-            <div id="Barfill" onClick={() => props.clickBar(props.clickAmount)}>
-                <div style={fill}> </div>
+            <div className="gameshop">
+
+                <div id="Barfill" onClick={() => props.clickBar(props.clickAmount)}>
+                    <div style={fill}></div>
+
+                </div>
+                <div className="wapper">
+                    <img className={props.actives ? "clicker clickerSize": "clickerSize"}  style={{animationDuration: `${props.duration}ms`}} src={cursor}></img>
+                </div>
             </div>
         </div>
     )

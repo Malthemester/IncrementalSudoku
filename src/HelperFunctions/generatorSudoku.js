@@ -56,42 +56,47 @@ function CheckSukoku(size, board, squares) {
 }
 
 function MakeSudoku(size, square) {
-    let numArry = FillArray(size)
-    let newBoard = Array(size).fill(null).map(() => Array(size).fill(numArry))
-    let pickerArr = [[Math.floor(Math.random() * size), Math.floor(Math.random() * size)]]
-    let pickerIndex = []
-
-    let index, randomNumber, randomIndexNumber
-
-    let notFull = true
-    while (notFull) {
-
-        pickerArr.sort((arr1, arr2) => arr1.length - arr2.length)
-
-        index = 0
-        if (pickerArr.length > 0) {
-
-            if (newBoard[pickerArr[index][0]][pickerArr[index][1]].length > 1) {
-
-                randomIndexNumber = Math.floor(Math.random() * newBoard[pickerArr[index][0]][pickerArr[index][1]].length)
-                randomNumber = newBoard[pickerArr[index][0]][pickerArr[index][1]][randomIndexNumber]
-
-                newBoard[pickerArr[index][0]][pickerArr[index][1]] = [randomNumber]
-                RemovePencelmark(pickerArr[index][0], pickerArr[index][1], newBoard, size, randomNumber, square, pickerIndex, pickerArr)
+    let newBoard
+    do {
+        let numArry = FillArray(size)
+        newBoard = Array(size).fill(null).map(() => Array(size).fill(numArry))
+        let pickerArr = [[Math.floor(Math.random() * size), Math.floor(Math.random() * size)]]
+        let pickerIndex = []
+    
+        let index, randomNumber, randomIndexNumber
+    
+        let notFull = true
+        while (notFull) {
+    
+            pickerArr.sort((arr1, arr2) => arr1.length - arr2.length)
+    
+            index = 0
+            if (pickerArr.length > 0) {
+    
+                if (newBoard[pickerArr[index][0]][pickerArr[index][1]].length > 1) {
+    
+                    randomIndexNumber = Math.floor(Math.random() * newBoard[pickerArr[index][0]][pickerArr[index][1]].length)
+                    randomNumber = newBoard[pickerArr[index][0]][pickerArr[index][1]][randomIndexNumber]
+    
+                    newBoard[pickerArr[index][0]][pickerArr[index][1]] = [randomNumber]
+                    RemovePencelmark(pickerArr[index][0], pickerArr[index][1], newBoard, size, randomNumber, square, pickerIndex, pickerArr)
+                }
+                pickerArr.splice(index, 1)
+                pickerIndex.splice(index, 1)
+    
             }
-            pickerArr.splice(index, 1)
-            pickerIndex.splice(index, 1)
-
+    
+            if (pickerArr.length <= 0) {
+                notFull = false
+            }
         }
+        
+    } while (!CheckSukoku(size, newBoard, square));
 
-        if (pickerArr.length <= 0) {
-            notFull = false
-        }
-    }
 
-    if (!CheckSukoku(size, newBoard, square)) {
-        return MakeSudoku(size, square)
-    }
+    // if (!CheckSukoku(size, newBoard, square)) {
+    //     return MakeSudoku(size, square)
+    // }
 
     return newBoard
 }
