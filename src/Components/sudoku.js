@@ -18,7 +18,7 @@ export default function Sudoku(props) {
 
 		if (value != null && value.includes("h")) { 
 			return (
-				<td className="highlight" style={bold} key={`tdK${i}${j}`}  onClick={() => callBack(i, j, props.gameBoard, props.setGameBoard, props.id, props.amount)}>
+				<td className="highlight" key={`tdK${i}${j}`}  onClick={() => callBack(i, j, props.gameBoard, props.setGameBoard, props.id, props.amount)}>
 					{value.replace('h', '')}
 				</td>)
 		}

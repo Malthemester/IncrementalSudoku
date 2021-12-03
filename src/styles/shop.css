@@ -3,6 +3,11 @@
     width: 100%;
 }
 
+.shopDiv{
+    margin-left: auto; 
+    margin-right: 0;
+}
+
 .shopHeder{
     border-bottom: 2px solid rgb(122, 18, 182);
     width: 95%;
@@ -22,7 +27,7 @@
     display: block;
     margin-bottom: 3px;
     margin-top: 3px;
-    position: relative;
+    /* position: relative; */
     cursor: pointer;
 
 }

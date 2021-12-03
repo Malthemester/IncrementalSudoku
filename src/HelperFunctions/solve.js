@@ -24,13 +24,16 @@ function SolveOne(board, id, highlight = false) {
     }
 }
 
-function IsInSolve(id, checkFild){
+function IsInSolve(id, checkFild, board){
     let solveList = LoadSolution(id + "curSolveList")
 
     if (solveList == "")
-        return
+        return false
 
     solveList = solveList.split(",")
+
+    if (board[checkFild[0]][checkFild[1]] == checkFild[2])
+        return false
 
     let sovle = solveList.find(solve => solve == checkFild)
 

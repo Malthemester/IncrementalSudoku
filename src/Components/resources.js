@@ -8,8 +8,8 @@ function resourcesRow(value, name, valuePerSecond, display) {
     return (
         <tr>
             <td>{name}</td>
-            <td>{value}</td>
-            <td>{valuePerSecond}/m</td>
+            <td>{Number(value).toFixed(2)}</td>
+            <td>{Number(valuePerSecond).toFixed(2)}/s</td>
         </tr>
     )
 
@@ -26,7 +26,7 @@ export default function DisplayResources(props) {
                     <th></th>
 
                     {props.resources.map(resource => {
-                        return resourcesRow(resource.Value, resource.Name, (resource.Interval / 1000) * resource.AmountPar, resource.Display)
+                        return resourcesRow(resource.Value, resource.Name, resource.IncremenAmount, resource.Display)
                     })}
 
                 </tbody>

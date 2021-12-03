@@ -24,7 +24,7 @@ export function Board(props) {
 
     useEffect(() => {
         GetIncrementels()
-
+        AmountParTime()
         let savedBoard = localStorage.getItem(props.id + "curBoard")
         if (savedBoard != null) {
 
@@ -39,11 +39,11 @@ export function Board(props) {
 
     useEffect(() => {
         SetSolved(CheckSukoku(size, gameBoard, squares))
-        
+
         if (Actives[2])
             HighlightFild()
 
-    }, [gameBoard])
+    }, [gameBoard, Actives])
 
     useInterval(clickBar, Amounts[0], Actives[0], Intervals[0])
 
@@ -51,6 +51,10 @@ export function Board(props) {
         if (Actives[1] && solved)
             collect(`${size}x${size}`, Amounts[1], size, squares)
     }, [solved])
+
+    useEffect(() => {
+        AmountParTime()
+    }, [Intervals, Amounts])
 
     function GetIncrementels() {
         let shop = shopItemsTemp
@@ -61,21 +65,39 @@ export function Board(props) {
         tempActives[0] = LoadResources(props.id + shop[0].Name) > 0
         tempIntervals[0] = shop[1].IncremenAmount(LoadResources(props.id + shop[1].Name))
         tempAmounts[0] = shop[2].IncremenAmount(LoadResources(props.id + shop[2].Name))
-        tempActives[1] = LoadResources(props.id + shop[3].Name) > 0
-        tempAmounts[1] = shop[4].IncremenAmount(LoadResources(props.id + shop[4].Name))
-        tempActives[2] = LoadResources(props.id + shop[5].Name) > 0
+        tempActives[2] = LoadResources(props.id + shop[3].Name) > 0
+        tempActives[1] = LoadResources(props.id + shop[4].Name) > 0
+        tempAmounts[1] = shop[5].IncremenAmount(LoadResources(props.id + shop[5].Name))
 
         SetIntervals(tempIntervals)
         SetActives(tempActives)
         SetAmounts(tempAmounts)
     }
 
-    function HighlightFild(){
+    function AmountParTime() {
+        if (Actives[0]) {
+
+            let tempResources = resources
+            let name = `${size}x${size}`
+
+            let fildParSec = 100 / (1000 / Math.max(Intervals[0], 0.01) * Amounts[0])
+
+            let removePoints = (Amounts[1] * (size * size)) / (fildParSec * remove)
+
+            let incremenAmount = (Amounts[1] / fildParSec) + removePoints
+
+            tempResources.find(resource => resource.Name == name).IncremenAmount = incremenAmount
+
+            props.setResources([...tempResources])
+        }
+    }   
+
+    function HighlightFild() {
         let nextSolve = SolveOne(gameBoard, props.id, true)
         let tempGameBoard = [...gameBoard]
-        
-        if (nextSolve == null || 
-            tempGameBoard[nextSolve[0]][nextSolve[1]] == null || 
+
+        if (nextSolve == null ||
+            tempGameBoard[nextSolve[0]][nextSolve[1]] == null ||
             tempGameBoard[nextSolve[0]][nextSolve[1]].includes("h")) {
             return
         }
@@ -91,14 +113,13 @@ export function Board(props) {
         SaveBoard(newBoard, props.id + `curBoard`)
     }
 
-
     function Purchase(costs, keyName, max) {
-        
+
         let tempMax = LoadResources(keyName)
         if (tempMax >= max) {
             return
         }
-        
+
         SaveResources(keyName, tempMax + 1)
         let tempResources = resources
 
@@ -116,6 +137,7 @@ export function Board(props) {
         let tempActive = Actives
         tempActive[0] = true
         SetActives([...tempActive])
+        AmountParTime()
     }
 
     function PurchaseClickerSpeed(cost, keyName, max, id) {
@@ -149,7 +171,7 @@ export function Board(props) {
 
         let purchaseAmount = LoadResources(props.id + keyName)
         let tempAmounts = Amounts
-        tempAmounts[1] = shopItemsTemp[4].IncremenAmount(purchaseAmount)
+        tempAmounts[1] = shopItemsTemp[5].IncremenAmount(purchaseAmount)
         SetAmounts([...tempAmounts])
     }
 
@@ -187,16 +209,16 @@ export function Board(props) {
         new PurchaseFunc(shopItemsTemp[0].Name, PurchaseClicker),
         new PurchaseFunc(shopItemsTemp[1].Name, PurchaseClickerSpeed),
         new PurchaseFunc(shopItemsTemp[2].Name, PurchaseClickerStrengh),
-        new PurchaseFunc(shopItemsTemp[3].Name, PurchaseCompleter),
-        new PurchaseFunc(shopItemsTemp[4].Name, PurchaseIncrease4x4),
-        new PurchaseFunc(shopItemsTemp[5].Name, PurchaseHighlight)
+        new PurchaseFunc(shopItemsTemp[3].Name, PurchaseHighlight),
+        new PurchaseFunc(shopItemsTemp[4].Name, PurchaseCompleter),
+        new PurchaseFunc(shopItemsTemp[5].Name, PurchaseIncrease4x4),
     ]
 
     function collect(name, value, size, squares) {
 
         let tempResources = resources
 
-        tempResources.find(resource => resource.Name == name).Value = CollectResources(name, value)
+        tempResources.find(resource => resource.Name == name).Value = CollectResources(name, value * (size * size))
 
         props.setResources([...tempResources])
         NewGame(size, squares)
@@ -206,6 +228,12 @@ export function Board(props) {
         if (solve == null) {
             return
         }
+
+        let tempResources = resources
+        let name = `${size}x${size}`
+        tempResources.find(resource => resource.Name == name).Value = CollectResources(name, Amounts[1])
+        props.setResources([...tempResources])
+
         let tempGameBoard = [...gameBoard]
         tempGameBoard[solve[0]][solve[1]] = String(solve[2] + "og")
         SetGameBoard(tempGameBoard)
@@ -242,12 +270,12 @@ export function Board(props) {
                         ></Complete>
                     </div>
                 </div>
-                <div>
-                    <Shop 
-                        resources={resources} 
-                        pruchaseFuncs={pruchaseFuncs} 
-                        name={size + "x" + size} 
-                        id={props.id} 
+                <div className="shopDiv">
+                    <Shop
+                        resources={resources}
+                        pruchaseFuncs={pruchaseFuncs}
+                        name={size + "x" + size}
+                        id={props.id}
                         items={shopItemsTemp}
                     ></Shop>
                 </div>

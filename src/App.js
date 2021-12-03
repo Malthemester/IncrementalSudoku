@@ -7,7 +7,7 @@ import DisplayResources from './Components/resources'
 import { SaveBoard, LoadResources, SaveResources } from './HelperFunctions/saveValue'
 import { Shop, gobalShopItems } from './Components/shop'
 import { IsInSolve } from './HelperFunctions/solve'
-import {CollectResources} from './HelperFunctions/getResources'
+import { CollectResources } from './HelperFunctions/getResources'
 
 let seleNumber = 1
 
@@ -21,11 +21,11 @@ export default function App(paams) {
 		AmountPar = 0
 		Display = false
 
-		constructor(name, value, interval, amountPar, display) {
+		constructor(name, value, interval, incremenAmount, display) {
 			this.Name = name
 			this.Value = value
 			this.Interval = interval
-			this.AmountPar = amountPar
+			this.IncremenAmount = incremenAmount
 			this.Display = display
 		}
 	}
@@ -87,18 +87,18 @@ export default function App(paams) {
 			return
 		}
 		let tempGameBoard = [...gameBoard]
-		tempGameBoard[x][y] = String(seleNumber)
-		SetGameBoard([...tempGameBoard])
-		SaveBoard(tempGameBoard, id + "curBoard")
-		if(IsInSolve(id, `${x}${y}${seleNumber}`))
-		{
+		if (IsInSolve(id, `${x}${y}${seleNumber}`, gameBoard)) {
 			let tempResources = resources
 			let name = `${gameBoard.length}x${gameBoard.length}`
 
 			tempResources.find(resource => resource.Name == name).Value = CollectResources(name, amount)
-	
+
 			SetResources([...tempResources])
 		}
+		tempGameBoard[x][y] = String(seleNumber)
+		SetGameBoard([...tempGameBoard])
+		SaveBoard(tempGameBoard, id + "curBoard")
+
 	}
 
 	let gobalShopItemsTemp = gobalShopItems()
@@ -137,6 +137,9 @@ export default function App(paams) {
 		Purchase(costs, id + keyName, max)
 		let tempActive = GobalsActives
 		tempActive[0] = true
+		let tempResources = resources
+		tempResources[1].Display = true
+		SetResources([...tempResources])
 		SetGobalsActives([...tempActive])
 	}
 
@@ -175,14 +178,12 @@ export default function App(paams) {
 							></Board>
 							: null
 					}
-
-
 				</div>
 				<div>
 					<Shop
 						resources={resources}
 						pruchaseFuncs={pruchaseFuncs}
-						name={"Gobal Shop"}
+						name={"Global Shop"}
 						id={id}
 						items={gobalShopItemsTemp}
 					></Shop>

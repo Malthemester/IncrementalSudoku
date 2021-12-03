@@ -17,11 +17,52 @@ body {
 
 .topText {
   margin-left: 5px;
+  font-size: larger;
+}
+
+.help{
+  border: solid thin;
+  border-color: black;
+  color: rgb(214, 16, 59);
+  position:fixed;
+  right: 15px;
+  top: 10px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  font-size:2.5ch;
+  font-weight:700;
+  background-color: gray;
+  border-radius: 60%;
+  cursor: pointer;
+}
+
+.hide{
+  display: none;
+
+  position: fixed;
+  border: thin solid;
+  border-color: black;
+  z-index:20;
+
+  padding: 10px;
+  color:whitesmoke;
+
+  background-color: rgb(82, 82, 82);
+  width: 80%;
+  height: 70%;
+  margin: 10%;
+  margin-top: 5%;
+}
+
+.help:hover + .hide{
+  display: block;  
 }
 
 
 .buttonList{
   margin: 5px;
+  display: flexbox;
 }
 
 .button {
@@ -70,19 +111,14 @@ body {
   width: 0;
 }
 
-
-
 .game{
   display: flex;
-  /* margin: 16px; */
-  /* margin: auto; */
-  /* width: 50%;
-  padding: 10px;
-   */
+  flex-wrap: wrap;
 }
 
 .gameshop{
   display: flex; 
+  flex-wrap: wrap;
 }
 
 .sudoku{
