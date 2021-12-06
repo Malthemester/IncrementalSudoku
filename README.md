@@ -13,4 +13,4 @@ How to play Sukodu
   - Each vertical column can only contain each number from 1 to size once
   - Each horizontal row can only contain each number from 1 to size once
 
-# React | CSS | HTML
+# React | JavaScript | CSS | HTML
